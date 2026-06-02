@@ -1,0 +1,858 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage{indentfirst, setspace}
+\usepackage{tabularx, multirow}
+\usepackage[normalem]{ulem}
+\usepackage[style=russian]{csquotes}
+\usepackage[english,russian]{babel}
+\usepackage{hyperref}
+\usepackage{ragged2e}
+\usepackage{caption}
+\usepackage{wrapfig}
+\usepackage{amsmath}
+\usepackage{tikz}
+\makeatletter
+\def\@biblabel#1{#1. }
+\makeatother
+\captionsetup{labelsep=endash}
+\usepackage{listings}
+\linespread{1.3}
+\lstset{
+  language=C++, % Язык программирования (можно выбрать другой)
+  basicstyle=\ttfamily\small, % Основной стиль шрифта
+  keywordstyle=\color{blue}, % Стиль ключевых слов
+  breaklines=true,
+  commentstyle=\color{green}, % Стиль комментариев
+  stringstyle=\color{red}, % Стиль строк
+  extendedchars=\true,
+  showstringspaces=false,
+}
+\usepackage[left=20mm, top=15mm, right=15mm, bottom=20mm]{geometry}
+
+\begin{document}
+\begin{titlepage}
+     \fontsize{12}{12}\selectfont
+
+  {\centering
+
+   \begin{bf}
+
+    \begin{wrapfigure}{l}{19mm}
+        \includegraphics[width=22mm]{emblem.jpeg}
+    \end{wrapfigure}
+
+
+    \noindent Министерство науки и высшего образования Российской Федерации
+
+    \noindent Федеральное государственное бюджетное образовательное учреждение высшего образования
+
+    \noindent \enquote{Московский государственный технический унверситет
+
+     \noindent имени Н.Э. Баумана
+
+     \noindent (национальный исследовательский университет)}
+
+    \noindent (МГТУ им. Н.Э. Баумана)
+
+   \end{bf}
+  }
+
+  \vspace{0.4cm}
+
+  {\setstretch{0.1}
+   \noindent\rule{\textwidth}{1mm}
+   \noindent\rule{\textwidth}{0.5mm}
+
+  }
+
+  \fontsize{14}{21}\selectfont
+
+  \noindent\begin{tabularx}{\textwidth}{l >{\centering\arraybackslash}X}
+   ФАКУЛЬТЕТ & \flqq Фундаментальные Науки\frqq \\ \cline{2-2}
+
+   КАФЕДРА & ФН-12 \flqq Математическое моделирование\frqq \\ \cline{2-2}
+  \end{tabularx}
+
+
+  \vspace{1cm}
+
+
+  \begin{center}
+   \begin{bf}
+
+    \fontsize{24}{36}\selectfont
+    ОТЧЕТ
+
+    \fontsize{20}{30}\selectfont
+    ПО ЛАБОРАТОРНОЙ РАБОТЕ НА ТЕМУ:
+
+    Длинная арифметика
+
+   \end{bf}
+  \end{center}
+
+  \fontsize{14}{21}\selectfont
+  \vspace{5cm}
+
+
+  \noindent\begin{tabularx}{\textwidth}{ X >{\centering}p{4cm} p{1cm} c }
+   Студент: & & & Подобедов В. В. \\ \cline{2-2} \cline{4-4}
+   & \fontsize{10}{15}\selectfont дата, подпись & & \fontsize{10}{15}\selectfont Ф.И.О. \\
+   Преподаватель: & & & Волкова Л. Л.\\ \cline{2-2} \cline{4-4}
+   & \fontsize{10}{15}\selectfont дата, подпись & & \fontsize{10}{15}\selectfont Ф.И.О.
+  \end{tabularx}
+
+  \vspace{\fill}
+
+  \begin{center}
+   \it{Москва}, 2023
+  \end{center}
+
+  \thispagestyle{empty}
+\end{titlepage}
+
+\renewcommand{\contentsname}{Содержание}
+\setcounter{page}{2}
+\tableofcontents
+
+\newpage
+\begin{center}
+   \section*{Введение} 
+\addcontentsline{toc}{section}{Введение}
+\end{center}
+\justifying
+
+\textbf{Цель лабораторной работы}: создать собственную структуру данных.
+
+Для достижения поставленной цели требуется решить следующие \textbf{задачи}.
+\begin{enumerate}
+\item Описать троичные числа.
+\item Разработать структуру данных для хранения целых чисел с повышением ёмкости хранения по сравнению с базовым типом данных.
+\item Реализовать $6$ операторов сравнения, операторы присваивания (копии значения), сложения и вычитания двух структур длинных чисел.
+\item Выполнить тестирование.
+\end{enumerate}
+
+Согласно варианту, требуется разработать структуру хранения троичных чисел.
+
+\newpage
+\begin{center}
+   \section{Аналитическая часть} 
+\end{center}
+
+\textbf{Длинная арифметика} --- арифметика, которая относится к арифметическим операциям над числами, превышающими предельные значения стандартных числовых типов данных (например, ``int'', ``long'', ``double'' и т.д.), либо к работе с числами, которые требуют более высокой точности или специфических условий хранения.
+
+\textbf{Троичные числа}~\cite{book} --- это числа, которые используют систему счисления с основанием $3$. В отличие от привычной для нас десятичной системы счисления (основание $10$), где используются цифры от $0$ до $9$, в троичной системе используются только три цифры: $0$, $1$ и $2$.
+
+\textbf{Емкость хранения} --- количество данных или информации, которое может быть сохранено или содержано в определенной системе, устройстве, структуре данных или носителе информации.
+
+\textbf{Тип данных} --- определяет характеристики данных, их формат, допустимый диапазон значений и операции, которые можно выполнять над этими данными.
+
+\newpage
+\begin{center}
+    \section{Конструкторская часть}
+\end{center}
+\subsection{Написание собственной структуры данных}
+С помощью класса ``LongTritNumber'', который описывает структуру данных для хранения целых чисел с повышенной емкостью хранения по сравнению с базовым типом данных, реализовать арифметику и сравнения для чисел, представленных троичными цифрами (False, Unknown, True) с емкостью хранения в 8 тритов. Требуется реализовать следующие методы и перегруженные операторы.
+\begin{itemize}
+    \item[---] Метод ``addTrits'' --- метод, который складывает два трита и возвращает сумму.
+    \item[---] Метод ``calculateCarry'' --- метод, который вычисляет перенос при сложении троичных чисел.
+    \item[---] Метод ``subtractTrits'' --- метод, который вычитает два трита и возвращает разность.
+    \item[---] Метод ``calculateBorrow'' --- метод, который вычисляет перенос при вычитании троичных чисел.
+    \item[---] ``operator[]'' --- перегруженный оператор для доступа к тритам по индексу.
+    \item[---] ``operator='' --- перегруженный оператор для операции присваивания.
+    \item[---] Операторы сравнения (``operator=='', ``operator!='', ``operator<'', ``operator>'', ``operator<='', ``operator>='') --- реализуют сравнение двух чисел по их тритам.
+    \item[---] Операторы арифметики (``operator+'', ``operator-'') --- реализуют сложение и вычитание двух чисел.
+    \item[---] Дружественная функция-оператор ``operator<<'' --- перегруженный оператор для вывода числа в виде строки троичных значений.
+    \item[---] Дружественная функция-оператор ``operator>>'' --- перегруженный оператор для ввода числа с клавиатуры.
+\end{itemize}
+
+\subsection{Сложение двух чисел}
+\begin{enumerate}
+    \item Создается новый объект типа ``LongTritNumber'', предназначенный для хранения результата сложения.
+    \item Инициализируется переменная ``carry'' с начальным значением False.
+    \item Итерация по тритам.
+    \begin{itemize}
+        \item[---] Происходит итерация через триты чисел с конца к началу.
+        \item[---] Выполняется вызов вспомогательной функции ``addTrits'' для сложения тритов и получения суммы и значения переноса.
+        \item[---] Результат сложения помещается в соответствующий разряд нового объекта типа ``LongTritNumber''.
+        \item[---] Перенос сохраняется для использования на следующей итерации.
+    \end{itemize}
+    \item  Возвращается объект типа ``LongTritNumber'', содержащий результат сложения.
+\end{enumerate}
+
+\subsection{Вычитание двух чисел}
+\begin{enumerate}
+    \item Создается новый объект типа ``LongTritNumber'', предназначенный для хранения результата вычитания.
+    \item Инициализируется переменная ``borrow'' с начальным значением False.
+    \item Итерация по тритам.
+    \begin{itemize}
+        \item[---] Происходит итерация через триты чисел с конца к началу.
+        \item[---] Выполняется вызов вспомогательной функции ``subtractTrits'' для вычитания тритов и получения разности и значения переноса.
+        \item[---] Результат вычитания помещается в соответствующий разряд нового объекта типа ``LongTritNumber''.
+        \item[---] Перенос сохраняется для использования на следующей итерации.
+    \end{itemize}
+    \item  Возвращается объект типа ``LongTritNumber'', содержащий результат вычитания.
+\end{enumerate}
+
+\subsection{Операторы сравения}
+\begin{enumerate}
+    \item Оператор равенства.
+    \begin{itemize}
+        \item[---] Пройти по всем тритам в обоих числах, сравнивая их между собой по позициям.
+        \item[---] Если все триты в соответствующих позициях равны, возвращает ``true''. Если хотя бы один трит не совпадает, возвращает ``false''.
+    \end{itemize}
+    \item Оператор неравенства.
+    \begin{itemize}
+        \item[---] Пройти по всем тритам в обоих числах, сравнивая их между собой по позициям.
+        \item[---] Если все триты в соответствующих позициях равны, возвращает ``false''. Если хотя бы один трит не совпадает, возвращает ``true''.
+    \end{itemize}
+    \item Оператор сравнения по отношению.
+    \begin{itemize}
+        \item[---] Пройти по тритам чисел, начиная с наиболее значимых разрядов
+        \item[---] Если найдено отличие, операторы возвращают ``true'' или ``false'' в соответствии с результатом сравнения.
+        \item[---] Если все триты в соответствующих позициях равны, операторы могут продолжить сравнение следующих тритов, пока не будет найдено отличие или не закончатся триты для сравнения. 
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Оператор ввода}
+\begin{enumerate}
+    \item Для каждого элемента в векторе ``trits'' (переменная, хранящая триты объекта\\ ``LongTritNumber'') выполняется итерация. При каждой итерации запрашивается у пользователя значение для трита с помощью стандартного ввода.
+    \item После ввода значения проверяется, находится ли оно в допустимом диапазоне ($0$, $1$ или $2$). Это происходит с помощью проверки условия ``if''. Если введенное значение не соответствует триту ($0$, $1$ или $2)$, выводится сообщение о некорректном вводе и оставшиеся незаполненны элементы вектора автоматически заполняются значениями $0$. Если значение корректно, оно сохраняется в текущий трит в векторе ``trits''.
+    \item После завершения итерации по всем тритам в объекте ``LongTritNumber'' функция возвращает поток ввода.
+\end{enumerate}
+
+\subsection{Оператор вывода}
+\begin{enumerate}
+    \item Для каждого элемента в векторе ``trits'' (переменная, хранящая триты объекта\\ ``LongTritNumber'') выполняется итерация. При каждой итерации определяется значение трита и выводится соответствующее ему текстовое представление в поток вывода.
+    \item После завершения итерации по всем тритам в объекте ``LongTritNumber'' функция возвращает поток вывода.
+\end{enumerate}
+
+\newpage
+\begin{center}
+    \section{Технологическая часть}
+\end{center}
+
+Лабораторная работа была реализована на языке программирования C++. Кроме стандартной библиотеки <iostream>, которая предоставляет возможность пользоваься средствами ввода-вывода для стандартной консоли, была подключена библиотека <vector>. Она представляет собой динамический массив, способный изменять свой размер в процессе выполнения программы.
+
+Далее приведен листинг реализации стека (листинг~\ref{lst:label1}).
+\begin{lstlisting}[caption={Исходный код программы для реализации стека},label={lst:label1}]
+//#include <iostream>
+//#include <vector>
+//
+//using namespace std;
+//
+//class LongTritNumber {
+//public:
+//	enum class Trit {False = 0, Unknown = 1, True = 2 };
+//	static const int Capacity = 8; 
+//
+//	LongTritNumber() {
+//		trits.resize(Capacity, Trit::False); 
+//	}
+//
+//	const Trit& operator[](size_t index) const {
+//		return trits[index];
+//	}
+//
+//	LongTritNumber& operator=(const LongTritNumber& other) {
+//		if (this != &other) {
+//			for (size_t i = 0; i < Capacity; ++i) {
+//				trits[i] = other.trits[i];
+//			}
+//		}
+//		return *this;
+//	}
+//
+//	bool operator==(const LongTritNumber& other) const {
+//		for (size_t i = 0; i < Capacity; ++i) {
+//			if (trits[i] != other.trits[i]) {
+//				return false;
+//			}
+//		}
+//		return true;
+//	}
+//
+//	bool operator!=(const LongTritNumber& other) const {
+//		for (size_t i = 0; i < Capacity; ++i) {
+//			if (trits[i] == other.trits[i]) {
+//				return true;
+//			}
+//		}
+//		return true;
+//	}
+//
+//	LongTritNumber operator+(const LongTritNumber& other) const {
+//		LongTritNumber result;
+//		Trit carry = Trit::False;
+//
+//		for (int i = Capacity - 1; i >= 0; --i) {
+//			Trit sum = addTrits(trits[i], other.trits[i], carry);
+//			result.trits[i] = sum;
+//			carry = calculateCarry(trits[i], other.trits[i], carry);
+//		}
+//
+//		return result;
+//	}
+//
+//	LongTritNumber operator-(const LongTritNumber& other) const {
+//		LongTritNumber result;
+//		Trit borrow = Trit::False;
+//
+//		for (int i = Capacity - 1; i >= 0; --i) {
+//			Trit diff = subtractTrits(trits[i], other.trits[i], borrow);
+//			result.trits[i] = diff;
+//			borrow = calculateBorrow(trits[i], other.trits[i], borrow);
+//		}
+//
+//		return result;
+//	}
+//
+//	bool operator<(const LongTritNumber& other) const {
+//		for (size_t i = 0; i < Capacity; ++i) {
+//			if (trits[i] < other.trits[i]) {
+//				return true;
+//			}
+//			else if (trits[i] > other.trits[i]) {
+//				return false;
+//			}
+//		}
+//		return false;
+//	}
+//
+//	bool operator>(const LongTritNumber& other) const {
+//		for (size_t i = 0; i < Capacity; ++i) {
+//			if (trits[i] > other.trits[i]) {
+//				return true;
+//			}
+//			else if (trits[i] < other.trits[i]) {
+//				return false;
+//			}
+//		}
+//		return false;
+//	}
+//
+//	bool operator<=(const LongTritNumber& other) const {
+//		for (size_t i = 0; i < Capacity; ++i) {
+//			if (trits[i] <= other.trits[i]) {
+//				return true;
+//			}
+//			else if (trits[i] >= other.trits[i]) {
+//				return false;
+//			}
+//		}
+//		return false;
+//	}
+//
+//	bool operator>=(const LongTritNumber& other) const {
+//		for (size_t i = 0; i < Capacity; ++i) {
+//			if (trits[i] >= other.trits[i]) {
+//				return true;
+//			}
+//			else if (trits[i] <= other.trits[i]) {
+//				return false;
+//			}
+//		}
+//		return false;
+//	}
+//
+//	friend ostream& operator<<(ostream& os, const LongTritNumber& number) {
+//		for (const auto& trit : number.trits) {
+//			switch (trit) {
+//			case Trit::False:
+//				os << "False";
+//				break;
+//			case Trit::Unknown:
+//				os << "Unknown";
+//				break;
+//			case Trit::True:
+//				os << "True";
+//				break;
+//			}
+//			os << " ";
+//		}
+//		return os;
+//	}
+//
+//	friend istream& operator>>(istream& is, LongTritNumber& number) {
+//		for (auto& trit : number.trits) {
+//			int userInput;
+//			cout << "Введите значение трита (0 - False, 1 - Unknown, 2 - True): ";
+//			is >> userInput;
+//
+//			if (userInput >= 0 && userInput <= 2) {
+//				trit = static_cast<Trit>(userInput);
+//			}
+//			else {
+//				cout << "Некорректный ввод, используйте значения от 0 до 2." << endl;
+//				return is;
+//			}
+//		}
+//		return is;
+//	}
+//
+//private:
+//	vector<Trit> trits;
+//
+//	Trit addTrits(Trit a, Trit b, Trit& carry) const {
+//		int sum = static_cast<int>(a) + static_cast<int>(b);
+//		carry = static_cast<Trit>(sum / 3);
+//		return static_cast<Trit>(sum % 3);
+//	}
+//
+//	Trit calculateCarry(Trit a, Trit b, Trit carry) const {
+//		int sum = static_cast<int>(a) + static_cast<int>(b) + static_cast<int>(carry);
+//		return static_cast<Trit>(sum / 3); // 1 если sum >= 3, иначе 0
+//	}
+//
+//	Trit subtractTrits(Trit a, Trit b, Trit& borrow) const {
+//		int diff = static_cast<int>(a) - static_cast<int>(b) - static_cast<int>(borrow);
+//		if (diff < 0) {
+//			diff += 3; // Коррекция для отрицательных значений
+//			borrow = Trit::True;
+//		}
+//		else {
+//			borrow = Trit::False;
+//		}
+//		return static_cast<Trit>(diff);
+//	}
+//
+//	Trit calculateBorrow(Trit a, Trit b, Trit borrow) const {
+//		int diff = static_cast<int>(a) - static_cast<int>(b) - static_cast<int>(borrow);
+//		return (diff < 0) ? Trit::True : Trit::False; // 1 если diff < 0, иначе 0
+//	}
+//};
+//
+//int main() {
+//	setlocale(0, "");
+//	LongTritNumber a, b; 
+//
+//	int otr1 = 0;
+//	cout << "Число а положительное или отрицательное? (0 - полож. / 1 - отриц)";
+//	cin >> otr1;
+//    cout << "Введите значения для переменной a:" << endl;
+//    cin >> a;
+//
+//	int otr2 = 0;
+//	cout << "Число b положительное или отрицательное? (0 - полож. / 1 - отриц)";
+//	cin >> otr2;
+//    cout << "Введите значения для переменной b:" << endl;
+//    cin >> b;
+//
+//	LongTritNumber c = a + b; 
+//	LongTritNumber d = a - b; 
+//
+//	cout << "Результат сложения: " << c << endl;
+//	cout << "Результат вычитания: " << d << endl;
+//
+//	if (a == b) {
+//		cout << "a равно b" << endl;
+//	}
+//	else {
+//		cout << "a не равно b" << endl;
+//	}
+//
+//	if (a != b) {
+//		cout << "a не равно b" << endl;
+//	}
+//	else {
+//		cout << "a равно b" << endl;
+//	}
+//
+//	if (a < b) {
+//		cout << "a меньше b" << endl;
+//	}
+//	else {
+//		cout << "a не меньше b" << endl;
+//	}
+//
+//	if (a > b) {
+//		cout << "a больше b" << endl;
+//	}
+//	else {
+//		cout << "a не больше b" << endl;
+//	}
+//
+//	if (a <= b) {
+//		cout << "a меньше или равно b" << endl;
+//	}
+//	else {
+//		cout << "a не меньше или равно b" << endl;
+//	}
+//
+//	if (a >= b) {
+//		cout << "a больше или равно b" << endl;
+//	}
+//	else {
+//		cout << "a не больше или равно b" << endl;
+//	}
+//
+//	return 0;
+//}
+//
+
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+class LongTritNumber {
+public:
+	enum class Trit { False = 0, Unknown = 1, True = 2 };
+	static const int Capacity = 9; // Увеличиваем емкость на 1 для хранения знака
+
+	LongTritNumber() {
+		trits.resize(Capacity, Trit::False);
+	}
+
+	const Trit& operator[](size_t index) const {
+		return trits[index];
+	}
+
+	LongTritNumber& operator=(const LongTritNumber& other) {
+		if (this != &other) {
+			for (size_t i = 0; i < Capacity; ++i) {
+				trits[i] = other.trits[i];
+			}
+		}
+		return *this;
+	}
+		
+	bool operator==(const LongTritNumber& other) const {
+		if (trits[0] != other.trits[0]) {
+			return false;
+		}
+
+		for (size_t i = 0; i < Capacity; ++i) {
+			if (trits[i] != other.trits[i]) {
+				return false;
+			}
+		}
+		return true;
+	}
+		
+	bool operator!=(const LongTritNumber& other) const {
+		for (size_t i = 0; i < Capacity; ++i) {
+			if (trits[i] != other.trits[i]) {
+				return true;
+			}
+		}
+		return false;
+	}
+		
+	LongTritNumber operator+(const LongTritNumber& other) const {
+		LongTritNumber result;
+		Trit carry = Trit::False;
+
+		for (int i = Capacity - 1; i >= 0; --i) {
+			Trit sum = addTrits(trits[i], other.trits[i], carry);
+			result.trits[i] = sum;
+		}
+
+		return result;
+	}
+		
+	LongTritNumber operator-(const LongTritNumber& other) const {
+		LongTritNumber result;
+		Trit borrow = Trit::False;
+		
+		for (int i = Capacity - 1; i >= 0; --i) {
+			Trit diff = subtractTrits(trits[i], other.trits[i], borrow);
+			result.trits[i] = diff;
+			borrow = calculateBorrow(trits[i], other.trits[i], borrow);
+		}
+		
+		return result;
+	}
+		
+	int operator<(const LongTritNumber& other) const {
+		if (trits[0] != other.trits[0]) {
+			return (trits[0] == Trit::True);
+		}
+		for (size_t i = 1; i < Capacity; ++i) {
+			if (trits[i] < other.trits[i]) {
+				return true;
+			}
+			else if (trits[i] > other.trits[i]) {
+				return false;
+			}
+		}
+		return 3;
+	}
+
+	int operator>(const LongTritNumber& other) const {
+		if (trits[0] != other.trits[0]) {
+			return (trits[0] == Trit::False);
+		}
+		for (size_t i = 1; i < Capacity; ++i) {
+			if (trits[i] > other.trits[i]) {
+				return true;
+			}
+			else if (trits[i] < other.trits[i]) {
+				return false;
+			}
+		}
+		return 3;
+	}
+
+	bool operator<=(const LongTritNumber& other) const {
+		if (trits[0] != other.trits[0]) {
+			return (trits[0] == Trit::True);
+		}
+		for (size_t i = 1; i < Capacity; ++i) {
+			if (trits[i] <= other.trits[i]) {
+				return true;
+			}
+			else if (trits[i] >= other.trits[i]) {
+				return false;
+			}
+		}
+		return false;
+	}
+
+	bool operator>=(const LongTritNumber& other) const {
+		if (trits[0] != other.trits[0]) {
+			return (trits[0] == Trit::False);
+		}
+		for (size_t i = 1; i < Capacity; ++i) {
+			if (trits[i] >= other.trits[i]) {
+				return true;
+			}
+			else if (trits[i] <= other.trits[i]) {
+				return false;
+			}
+		}
+		return false;
+	}
+
+	friend ostream& operator<<(ostream& os, const LongTritNumber& number) {
+		if (number.trits[0] == Trit::True) {
+			os << "Отрицательное число: ";
+		}
+		else {
+			os << "Положительное число: ";
+		}
+		for (size_t i = 1; i < number.trits.size(); ++i) {
+			switch (number.trits[i]) {
+			case Trit::False:
+				os << "False";
+				break;
+			case Trit::Unknown:
+				os << "Unknown";
+				break;
+			case Trit::True:
+				os << "True";
+				break;
+			}
+			os << " ";
+		}
+		return os;
+	}
+
+	friend istream& operator>>(istream& is, LongTritNumber& number) {
+		int sign = 0;
+		cout << "Введите знак числа (0 - положительное / 1 - отрицательное): ";
+		is >> sign;
+
+		if (sign != 0 && sign != 1) {
+			cout << "Некорректный ввод знака числа." << endl;
+			return is;
+		}
+
+		number.trits[0] = (sign == 1) ? Trit::True : Trit::False;
+
+		for (size_t i = 1; i < number.trits.size(); ++i) {
+			int userInput;
+			cout << "Введите значение трита (0 - False, 1 - Unknown, 2 - True): ";
+			is >> userInput;
+
+			if (userInput >= 0 && userInput <= 2) {
+				number.trits[i] = static_cast<Trit>(userInput);
+			}
+			else {
+				cout << "Некорректный ввод, используйте значения от 0 до 2." << endl;
+				return is;
+			}
+		}
+		return is;
+	}
+
+private:
+		vector<Trit> trits;
+
+	Trit addTrits(Trit a, Trit b, Trit& carry) const {
+		int sum = static_cast<int>(a) + static_cast<int>(b) + static_cast<int>(carry);
+		carry = static_cast<Trit>(sum / 3);
+		return static_cast<Trit>(sum % 3);
+	}
+
+	Trit calculateCarry(Trit a, Trit b, Trit carry) const {
+		int sum = static_cast<int>(a) + static_cast<int>(b) + static_cast<int>(carry);
+		return static_cast<Trit>(sum / 3); // 1 если sum >= 3, иначе 0
+	}
+
+	Trit subtractTrits(Trit a, Trit b, Trit& borrow) const {
+		int diff = static_cast<int>(a) - static_cast<int>(b) - static_cast<int>(borrow);
+		if (diff < 0) {
+			diff += 3; 
+			borrow = Trit::True;
+		}
+		else {
+			borrow = Trit::False;
+		}
+		return static_cast<Trit>(diff);
+	}
+
+	Trit calculateBorrow(Trit a, Trit b, Trit borrow) const {
+		int diff = static_cast<int>(a) - static_cast<int>(b) - static_cast<int>(borrow);
+		return (diff < 0) ? Trit::True : Trit::False;
+	}
+};
+
+int main() {
+	setlocale(0, "");
+	LongTritNumber a, b;
+
+	cout << "Введите числа:" << endl;
+	cout << "Число a:" << endl;
+	cin >> a;
+
+	cout << "Число b:" << endl;
+	cin >> b;
+
+	LongTritNumber c = a + b;
+	LongTritNumber d = a - b;
+
+	cout << endl;
+	cout << "Результат сложения: " << c << endl;
+	cout << "Результат вычитания: " << d << endl;
+
+	if (a == b) {
+		cout << "a равно b" << endl;
+	}
+	else {
+		cout << "a не равно b" << endl;
+	}
+
+	if (a != b) {
+		cout << "a не равно b" << endl;
+	}
+	else {
+		cout << "a равно b" << endl;
+	}
+
+	if (a < b) {
+		if ((a < b) == 3) {
+			cout << "Числа равны" << endl;
+
+		}
+		else {
+			cout << "a меньше b" << endl;
+		}
+	}
+	else {		
+		cout << "a не меньше b" << endl;
+	}
+
+	if (a > b) {
+		if ((a > b) == 3){
+			cout << "Числа равны" << endl;
+		}
+		else {
+			cout << "a больше b" << endl;
+		}		
+	}
+	else {
+		cout << "a не больше b" << endl;
+	}
+
+	if (a <= b) {
+		cout << "a меньше или равно b" << endl;
+	}
+	else {
+		cout << "a не меньше или равно b" << endl;
+	}
+
+	if (a >= b) {
+		cout << "a больше или равно b" << endl;
+	}
+	else {
+		cout << "a не больше или равно b" << endl;
+	}
+
+	return 0;
+}
+\end{lstlisting}
+
+\newpage
+\begin{center}
+    \section{Исследовательская часть}
+\end{center}
+
+Далее на рисунках представлен результат работы программы.
+
+Результат работы программы, где пользователь вводит троичное число, и программа выводит сумму двух чисел, разность и сравнивает их. Результат приведён на рис.~\ref{img:grap1}. 
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm]{test1.PNG}}
+    \caption{Пример №1}
+    \label{img:grap1}
+\end{figure}
+
+\newpage
+Результат работы программы, где пользователь вводит троичное число, и программа выводит сумму двух чисел, разность и сравнивает их. Результат приведён на рис.~\ref{img:grap2}. 
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm]{test2.PNG}}
+    \caption{Пример №2}
+    \label{img:grap2}
+\end{figure}
+
+Результат работы программы, где пользователь неверно вводит троичное число. Программа выводит сумму двух чисел, разность и сравнивает их. Результат приведён на рис.~\ref{img:grap3}. 
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm]{test3.PNG}}
+    \caption{Пример №3}
+    \label{img:grap3}
+\end{figure}
+
+\newpage
+Результат работы программы, где пользователь вводит два отрицательных троичных числа. Программа выводит сумму двух чисел, разность и сравнивает их. Результат приведён на рис.~\ref{img:grap4}. 
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm]{test4.PNG}}
+    \caption{Пример №4}
+    \label{img:grap4}
+\end{figure}
+
+\newpage
+Результат работы программы, где пользователь неверно вводит знак троичных чисел. Программа выводит сумму двух чисел, разность и сравнивает их. Результат приведён на рис.~\ref{img:grap5}. 
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm]{test5.PNG}}
+    \caption{Пример №5}
+    \label{img:grap5}
+\end{figure}
+
+\newpage
+\begin{center}
+    \section*{Заключение}
+    \addcontentsline{toc}{section}{Заключение}
+\end{center}
+
+Цель лабораторной работы достигнута: создана собственная структура данных.
+
+В результате выполнения лабораторной работы были выполнены все задачи.
+\begin{enumerate}
+\item Описаны троичные числа.
+\item Разработана структура данных для хранения целых чисел с повышением ёмкости хранения по сравнению с базовым типом данных.
+\item Реализованы $6$ операторов сравнения, операторы присваивания (копии значения), сложения и вычитания двух структур длинных чисел.
+\item Выполнено тестирование.
+\end{enumerate}
+
+\newpage
+\begin{center}
+\begin{thebibliography}{}
+\addcontentsline{toc}{section}{Список используемых источников}
+\bibitem{book}Рамиль Альварес Х. Алгоритмы троичной арифметики. – М.,Фонд
+«Новое тысячелетие», 2012. – 20 с.
+\end{thebibliography}
+\end{center}
+
+\end{document}

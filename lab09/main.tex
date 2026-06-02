@@ -1,0 +1,561 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage{indentfirst, setspace}
+\usepackage{tabularx, multirow}
+\usepackage[normalem]{ulem}
+\usepackage[style=russian]{csquotes}
+\usepackage[english,russian]{babel}
+\usepackage{hyperref}
+\usepackage{ragged2e}
+\usepackage{caption}
+\usepackage{wrapfig}
+\usepackage{amsmath}
+\usepackage{tikz}
+\makeatletter
+\def\@biblabel#1{#1. }
+\makeatother
+\captionsetup{labelsep=endash}
+\usepackage{listings}
+\linespread{1.3}
+\lstset{
+  language=C++, % Язык программирования (можно выбрать другой)
+  basicstyle=\ttfamily\small, % Основной стиль шрифта
+  keywordstyle=\color{blue}, % Стиль ключевых слов
+  breaklines=true,
+  commentstyle=\color{green}, % Стиль комментариев
+  stringstyle=\color{red}, % Стиль строк
+  extendedchars=\true,
+  showstringspaces=false,
+}
+\usepackage[left=20mm, top=15mm, right=15mm, bottom=20mm]{geometry}
+
+\begin{document}
+\begin{titlepage}
+     \fontsize{12}{12}\selectfont
+
+  {\centering
+
+   \begin{bf}
+
+    \begin{wrapfigure}{l}{19mm}
+        \includegraphics[width=22mm]{emblem.jpeg}
+    \end{wrapfigure}
+
+
+    \noindent Министерство науки и высшего образования Российской Федерации
+
+    \noindent Федеральное государственное бюджетное образовательное учреждение высшего образования
+
+    \noindent \enquote{Московский государственный технический унверситет
+
+     \noindent имени Н.Э. Баумана
+
+     \noindent (национальный исследовательский университет)}
+
+    \noindent (МГТУ им. Н.Э. Баумана)
+
+   \end{bf}
+  }
+
+  \vspace{0.4cm}
+
+  {\setstretch{0.1}
+   \noindent\rule{\textwidth}{1mm}
+   \noindent\rule{\textwidth}{0.5mm}
+
+  }
+
+  \fontsize{14}{21}\selectfont
+
+  \noindent\begin{tabularx}{\textwidth}{l >{\centering\arraybackslash}X}
+   ФАКУЛЬТЕТ & \flqq Фундаментальные Науки\frqq \\ \cline{2-2}
+
+   КАФЕДРА & ФН-12 \flqq Математическое моделирование\frqq \\ \cline{2-2}
+  \end{tabularx}
+
+
+  \vspace{1cm}
+
+
+  \begin{center}
+   \begin{bf}
+
+    \fontsize{24}{36}\selectfont
+    ОТЧЕТ
+
+    \fontsize{20}{30}\selectfont
+    ПО ЛАБОРАТОРНОЙ РАБОТЕ НА ТЕМУ:
+
+    АВЛ дерево
+
+   \end{bf}
+  \end{center}
+
+  \fontsize{14}{21}\selectfont
+  \vspace{5cm}
+
+
+  \noindent\begin{tabularx}{\textwidth}{ X >{\centering}p{4cm} p{1cm} c }
+   Студент: & & & Подобедов В. В. \\ \cline{2-2} \cline{4-4}
+   & \fontsize{10}{15}\selectfont дата, подпись & & \fontsize{10}{15}\selectfont Ф.И.О. \\
+   Преподаватель: & & & Волкова Л. Л.\\ \cline{2-2} \cline{4-4}
+   & \fontsize{10}{15}\selectfont дата, подпись & & \fontsize{10}{15}\selectfont Ф.И.О.
+  \end{tabularx}
+
+  \vspace{\fill}
+
+  \begin{center}
+   \it{Москва}, 2023
+  \end{center}
+
+  \thispagestyle{empty}
+\end{titlepage}
+
+\renewcommand{\contentsname}{Содержание}
+\setcounter{page}{2}
+\tableofcontents
+
+\newpage
+\begin{center}
+   \section*{Введение} 
+\addcontentsline{toc}{section}{Введение}
+\end{center}
+\justifying
+\textbf{Цель лабораторной работы}: разработать программу для создания АВЛ-дерева.
+
+Для достижения поставленной цели требуется решить следующие \textbf{задачи}.
+\begin{enumerate}
+\item Описать структуру АВЛ-дерева.
+\item Описать алгоритмы добавления и удаления элемента, поиска элемента в дереве, балансировки дерева.
+\item Разработать программу, предоставляющую пользователю выбор пункта меню, отображающую меню в цикле с постусловием, реализующую все описанные алгоритмы.
+\item Выполнить тестирование программы.
+\item Привести примеры работы программы.
+\end{enumerate}
+
+\newpage
+\begin{center}
+   \section{Аналитическая часть} 
+\end{center}
+
+\textbf{АВЛ-дерево}~\cite{book} --- это прежде всего двоичное дерево поиска, ключи которого удовлетворяют стандартному свойству: ключ любого узла дерева не меньше любого ключа в левом поддереве данного узла и не больше любого ключа в правом поддереве этого узла. Основная идея состоит в том, чтобы поддерживать высоты левого и правого поддеревьев каждого узла в балансе так, чтобы разница высот поддеревьев для каждого узла не превышала $1$ (то есть разница высот должна быть $-1$, $0$ или $1$). Каждый узел АВЛ-дерева содержит ключ, ссылки на левое и правое поддеревья, а также информацию о высоте. При вставке или удалении узлов дерево перебалансируется, чтобы сохранить свойство баланса высот. Это происходит путём поворотов узлов вокруг своих осей.
+
+\newpage
+\begin{center}
+    \section{Конструкторская часть}
+\end{center}
+\subsection{Добавление элемента}
+\begin{enumerate}
+    \item Вставка нового элемента.
+    \begin{itemize}
+        \item[---] Создать функцию ``insert'', которая принимает корень дерева и новый ключ для вставки.
+        \item[---] Если дерево пустое (корень --- ``nullptr''), создать новый узел с переданным ключом и сделать его корнем дерева.
+        \item[---] Если ключ меньше ключа текущего узла, рекурсивно вставить его в левое поддерево.
+        \item[---] Если ключ больше ключа текущего узла, рекурсивно вставить его в правое поддерево.
+        \item[---] После вставки узла, обновить высоту текущего узла.
+        \item[---] Вычислить балансировку ``balanceFactor'' для текущего узла (разница высот левого и правого поддерева).
+        \item[---] Если балансировка узла нарушена (больше $1$ или меньше $-1$), выполнить балансировку путем вращений. 
+    \end{itemize}
+    \item Балансировка дерева.
+    \begin{itemize}
+        \item[---] Если баланс больше $1$ и вставка была в левое поддерево левого потомка, выполнить правый поворот для текущего узла.
+        \item[---] Если баланс меньше $-1$ и вставка была в правое поддерево правого потомка, выполнить левый поворот для текущего узла.
+        \item[---] Если баланс больше $1$ и вставка была в правое поддерево левого потомка, выполнить двойной поворот. Сначала левый поворот для левого потомка, затем правый поворот для текущего узла.
+        \item[---] Если баланс меньше $-1$ и вставка была в левое поддерево правого потомка, выполнить двойной поворот. Сначала правый поворот для правого потомка, затем левый поворот для текущего узла.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Удаление элемента}
+\begin{enumerate}
+    \item Начало удаления.
+    \begin{itemize}
+        \item[---] Функция ``remove'' принимает корень дерева ``root'' и ключ ``key'' для удаления.
+        \item[---] Если корень дерева пуст, возвращается ``nullptr'', так как узла для удаления не существует.
+    \end{itemize}
+    \item Поиск узла для удаления.
+    \begin{itemize}
+        \item[---] Если ключ меньше ключа текущего узла, рекурсивно вызывается ``remove'' для левого поддерева.
+        \item[---] Если ключ больше ключа текущего узла, рекурсивно вызывается ``remove'' для правого поддерева.
+        \item[---] Если ключ совпадает с ключом текущего узла, происходит удаление узла.
+    \end{itemize}
+    \item Удаление узла.
+    \begin{itemize}
+        \item[---] Если у узла есть один потомок, узел заменяется этим потомком.
+        \item[---] Если у узла два потомка, найденный узел с наименьшим ключом в правом поддереве заменяет удаляемый узел.
+    \end{itemize}
+    \item Балансировка после удаления.
+    \begin{itemize}
+        \item[---] После удаления узла, пересчитывается высота текущего узла. Проверяется баланс текущего узла.
+        \item[---] Если баланс больше $1$ и левое поддерево текущего узла сбалансировано (balanceFactor(root->left) >= $0$), выполняется правый поворот.
+        \item[---] Если баланс больше $1$ и левое поддерево текущего узла несбалансировано (balanceFactor(root->left) < $0$), выполняется левый поворот, а затем правый поворот.
+        \item[---] Если баланс меньше $-1$ и правое поддерево текущего узла сбалансировано (balanceFactor(root->right) <= $0$), выполняется левый поворот.
+        \item[---] Если баланс меньше $-1$ и правое поддерево текущего узла несбалансировано (balanceFactor(root->right) > $0$), выполняется правый поворот, а затем левый поворот. 
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Поиск элемента}
+\begin{enumerate}
+    \item Функция принимает указатель на корень дерева ``root'' и ключ ``key'' для поиска.
+    \item Если корень дерева пуст, возвращается ``false'', так как узла с заданным ключом в дереве нет.
+    \item Сравнение ключа.
+    \begin{itemize}
+        \item[---] Если ключ совпадает с ключом текущего узла, возвращается ``true'', так как узел с искомым ключом найден.
+        \item[---] Если ключ меньше ключа текущего узла, рекурсивно вызывается ``search'' для левого поддерева.
+        \item[---] Если ключ больше ключа текущего узла, рекурсивно вызывается ``search'' для правого поддерева.
+    \end{itemize}
+    \item Возврат результата.
+    \begin{itemize}
+        \item[---] Если узел с искомым ключом найден, возвращается ``true''.
+        \item[---] Если узел не найден, возвращается ``false'', так как узла с искомым ключом в дереве нет. 
+    \end{itemize}
+\end{enumerate}
+
+\newpage
+\begin{center}
+    \section{Технологическая часть}
+\end{center}
+
+Лабораторная работа была реализована на языке программирования C++. Кроме стандартной библиотеки <iostream>, которая предоставляет возможность пользоваься средствами ввода-вывода для стандартной консоли, была подключена библиотека <queue>. Она предоставляет реализацию очереди (queue) - структуры данных, основанной на принципе "первым пришёл — первым вышел" (FIFO - First-In-First-Out). Это означает, что элементы добавляются в конец очереди, а извлекаются из начала. Библиотека <algorithm> в C++ предоставляет множество стандартных функций для работы с контейнерами, итераторами и другими структурами данных.
+
+Далее приведен листинг реализации трех алгоритмов (листинг~\ref{lst:label1}).
+\begin{lstlisting}[caption={Исходный код программы для построения АВЛ-дерева},label={lst:label1}]
+#include <iostream>
+#include <algorithm>
+#include <queue>
+
+using namespace std;
+
+class AVLTree {
+private:
+	struct Node {
+		int key;
+		Node* left;
+		Node* right;
+		int height;
+
+		Node(int k) : key(k), left(nullptr), right(nullptr), height(1) {}
+	};
+
+	Node* root;
+
+	int height(Node* node) {
+		if (node == nullptr) return 0;
+		return node->height;
+	}
+
+	int balanceFactor(Node* node) {
+		if (node == nullptr) return 0;
+		return height(node->left) - height(node->right);
+	}
+
+	Node* rightRotate(Node* root) {
+		Node* x = root->left;
+		Node* T2 = x->right;
+		x->right = root;
+		root->left = T2;
+
+		root->height = max(height(root->left), height(root->right)) + 1;
+		x->height = max(height(x->left), height(x->right)) + 1;
+
+		return x;
+	}
+
+	Node* leftRotate(Node* root) {
+		Node* y = root->right;
+		Node* T2 = y->left;
+		y->left = root;
+		root->right = T2;
+
+		root->height = max(height(root->left), height(root->right)) + 1;
+		y->height = max(height(y->left), height(y->right)) + 1;
+
+		return y;
+	}
+
+	Node* insert(Node* node, int key) {
+		if (node == nullptr) return new Node(key);
+
+		if (key < node->key) {
+			node->left = insert(node->left, key);
+		}
+		else if (key > node->key) {
+			node->right = insert(node->right, key);
+		}
+		else {
+			return node;
+		}
+		
+		node->height = 1 + max(height(node->left), height(node->right));
+
+		int balance = balanceFactor(node);
+
+		if (balance > 1 && key < node->left->key) {
+			return rightRotate(node);
+		}
+		if (balance < -1 && key > node->right->key) {
+			return leftRotate(node);
+		}
+		if (balance > 1 && key > node->left->key) {
+			node->left = leftRotate(node->left);
+			return rightRotate(node);
+		}
+		if (balance < -1 && key < node->right->key) {
+			node->right = rightRotate(node->right);
+			return leftRotate(node);
+		}
+
+		return node;
+	}
+
+	Node* minValueNode(Node* node) {
+		Node* current = node;
+
+		while (current->left != nullptr) {
+			current = current->left;
+		}
+
+		return current;
+	}
+
+	Node* remove(Node* root, int key) {
+		if (root == nullptr) return root;
+
+		if (key < root->key) {
+			root->left = remove(root->left, key);
+		}
+		else if (key > root->key) {
+			root->right = remove(root->right, key);
+		}
+		else {
+			if (root->left == nullptr || root->right == nullptr) {
+				Node* temp = root->left ? root->left : root->right;
+
+				if (temp == nullptr) {
+					temp = root;
+					root = nullptr;
+				}
+				else{ 
+					*root = *temp; 
+				}
+
+				delete temp;
+			}
+			else {
+				Node* temp = minValueNode(root->right);
+				root->key = temp->key;
+				root->right = remove(root->right, temp->key);
+			}
+		}
+
+		if (root == nullptr) return root;
+
+		root->height = 1 + max(height(root->left), height(root->right));
+
+		int balance = balanceFactor(root);
+
+		if (balance > 1 && balanceFactor(root->left) >= 0) {
+			return rightRotate(root);
+		}
+		if (balance > 1 && balanceFactor(root->left) < 0) {
+			root->left = leftRotate(root->left);
+			return rightRotate(root);
+		}
+		if (balance < -1 && balanceFactor(root->right) <= 0) {
+			return leftRotate(root);
+		}
+		if (balance < -1 && balanceFactor(root->right) > 0) {
+			root->right = rightRotate(root->right);
+			return leftRotate(root);
+		}
+
+		return root;
+	}
+
+	bool search(Node* root, int key) {
+		if (root == nullptr) return false;
+
+		if (key == root->key) {
+			return true;
+		}
+		else if (key < root->key) {
+			return search(root->left, key);
+		}
+		else {
+			return search(root->right, key);
+		}
+	}
+
+public:
+	AVLTree() : root(nullptr) {}
+
+	void insert(int key) {
+		root = insert(root, key);
+	}
+
+	void remove(int key) {
+		root = remove(root, key);
+	}
+
+	bool search(int key) {
+		return search(root, key);
+	}
+
+	void printTreeLevelOrder() {
+		if (root == nullptr) {
+			cout << "Дерево пусто." << endl;
+			return;
+		}
+
+		cout << "Дерево (по уровням):" << endl;
+		queue<Node*> levelQueue;
+		levelQueue.push(root);
+
+		while (!levelQueue.empty()) {
+			int levelSize = levelQueue.size();
+
+			while (levelSize > 0) {
+				Node* current = levelQueue.front();
+				levelQueue.pop();
+
+				cout << current->key << " ";
+
+				if (current->left != nullptr) {
+					levelQueue.push(current->left);
+				}
+				if (current->right != nullptr) {
+					levelQueue.push(current->right);
+				}
+
+				levelSize--;
+			}
+
+			cout << endl;
+		}
+	}
+};
+
+int main() {
+	setlocale(0, "");
+	AVLTree tree;
+
+	int choice, key;
+	bool running = true;
+
+	while (running) {
+		cout << "Выберите операцию:" << endl;
+		cout << "1. Добавить элемент" << endl;
+		cout << "2. Удалить элемент" << endl;
+		cout << "3. Поиск элемента" << endl;
+		cout << "4. Вывести дерево (по уровням)" << endl;
+		cout << "5. Выйти из программы" << endl;
+		cout << "Введите выбор: ";
+		cin >> choice;
+
+		switch (choice) {
+		case 1:
+			cout << "Введите ключ для добавления: ";
+			cin >> key;
+			tree.insert(key);
+			cout << endl;
+			break;
+		case 2:
+			cout << "Введите ключ для удаления: ";
+			cin >> key;
+			tree.remove(key);
+			cout << endl;
+			break;
+		case 3:
+			cout << "Введите ключ для поиска: ";
+			cin >> key;
+			if (tree.search(key))
+				cout << "Элемент найден." << endl;
+			else
+				cout << "Элемент не найден." << endl;
+			cout << endl;
+			break;
+		case 4:
+			tree.printTreeLevelOrder();
+			break;
+		case 5:
+			running = false;
+			break;
+		default:
+			cout << "Неверный выбор! Попробуйте еще раз." << endl;
+		}
+	}
+
+	return 0;
+}
+
+\end{lstlisting}
+
+\newpage
+\begin{center}
+    \section{Исследовательская часть}
+\end{center}
+
+Далее на рисунках представлен результат работы программы.
+
+Результат работы программы, в котором создается АВЛ-дерево путем добавления туда элементов. Далее выводится созданное дерево, удаляется элемент и снова выводится АВЛ-дерево, приведен на рис.~\ref{img:grap1}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test1.PNG}}
+    \caption{Пример №1}
+    \label{img:grap1}
+\end{figure}
+
+\newpage
+\begin{figure}[h!]
+    \center{\includegraphics{test1_1.PNG}}
+    \caption{Пример №1 (продолжение)}
+\end{figure}
+
+\newpage
+Создается АВЛ-дерево путем добавления туда элементов. Далее несуществующий элемент удаляется и ищется в АВЛ-дереве. Удаляется введенный элемент и выводится пустое дерево. Результат работы программы, приведен на рис.~\ref{img:grap2}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test2.PNG}}
+    \caption{Пример №2}
+    \label{img:grap2}
+\end{figure}
+
+\newpage
+Создается АВЛ-дерево путем добавления туда одинаковых элементов. Результат работы программы, приведен на рис.~\ref{img:grap3}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test3.PNG}}
+    \caption{Пример №3}
+    \label{img:grap3}
+\end{figure}
+
+\newpage
+Создается АВЛ-дерево путем добавления туда элементов. Далее существующий ищется в АВЛ-дереве и вывдится построенное АВЛ-дерево. Результат работы программы, приведен на рис.~\ref{img:grap4}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test4.PNG}}
+    \caption{Пример №4}
+    \label{img:grap4}
+\end{figure}
+
+\newpage
+\begin{center}
+    \section*{Заключение}
+    \addcontentsline{toc}{section}{Заключение}
+\end{center}
+
+Цель лабораторной работы достигнута. Разработана программа для создания АВЛ-дерева.
+
+В результате выполнения лабораторной работы были выполнены все задачи.
+\begin{enumerate}
+\item Описана структура АВЛ-дерева.
+\item Описаны алгоритмы добавления и удаления элемента, поиска элемента в дереве, балансировки дерева.
+\item Разработана программа, предоставляющая пользователю выбор пункта меню, отображающая меню в цикле с постусловием, реализующая все описанные алгоритмы.
+\item Выполнено тестирование программы.
+\item Приведены примеры работы программы.
+\end{enumerate}
+
+\newpage
+\begin{center}
+\begin{thebibliography}{}
+\addcontentsline{toc}{section}{Список используемых источников}
+\bibitem{book} Никлаус Вирт. Алгоритмы и структуры данных. / Пер. с англ. Ткачев Ф. В. — М.: ДМК Пресс, 2010. — 272 с.
+\end{thebibliography}
+\end{center}
+
+\end{document}

@@ -1,0 +1,516 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage{indentfirst, setspace}
+\usepackage{tabularx, multirow}
+\usepackage[normalem]{ulem}
+\usepackage[style=russian]{csquotes}
+\usepackage[english,russian]{babel}
+\usepackage{hyperref}
+\usepackage{ragged2e}
+\usepackage{caption}
+\usepackage{wrapfig}
+\usepackage{amsmath}
+\usepackage{tikz}
+\makeatletter
+\def\@biblabel#1{#1. }
+\makeatother
+\captionsetup{labelsep=endash}
+\usepackage{listings}
+\linespread{1.3}
+\lstset{
+  language=C++, 
+  basicstyle=\ttfamily\small, 
+  keywordstyle=\color{blue},
+  breaklines=true,
+  commentstyle=\color{green},
+  stringstyle=\color{red}, 
+  extendedchars=\true,
+  showstringspaces=false,
+}
+\usepackage[left=20mm, top=15mm, right=15mm, bottom=20mm]{geometry}
+
+\begin{document}
+\begin{titlepage}
+     \fontsize{12}{12}\selectfont
+
+  {\centering
+
+   \begin{bf}
+
+    \begin{wrapfigure}{l}{19mm}
+        \includegraphics[width=22mm]{emblem.jpeg}
+    \end{wrapfigure}
+
+
+    \noindent Министерство науки и высшего образования Российской Федерации
+
+    \noindent Федеральное государственное бюджетное образовательное учреждение высшего образования
+
+    \noindent \enquote{Московский государственный технический унверситет
+
+     \noindent имени Н.Э. Баумана
+
+     \noindent (национальный исследовательский университет)}
+
+    \noindent (МГТУ им. Н.Э. Баумана)
+
+   \end{bf}
+  }
+
+  \vspace{0.4cm}
+
+  {\setstretch{0.1}
+   \noindent\rule{\textwidth}{1mm}
+   \noindent\rule{\textwidth}{0.5mm}
+
+  }
+
+  \fontsize{14}{21}\selectfont
+
+  \noindent\begin{tabularx}{\textwidth}{l >{\centering\arraybackslash}X}
+   ФАКУЛЬТЕТ & \flqq Фундаментальные Науки\frqq \\ \cline{2-2}
+
+   КАФЕДРА & ФН-12 \flqq Математическое моделирование\frqq \\ \cline{2-2}
+  \end{tabularx}
+
+
+  \vspace{1cm}
+
+
+  \begin{center}
+   \begin{bf}
+
+    \fontsize{24}{36}\selectfont
+    ОТЧЕТ
+
+    \fontsize{20}{30}\selectfont
+    ПО ЛАБОРАТОРНОЙ РАБОТЕ НА ТЕМУ:
+
+    Сжатие файла методом Хаффмана
+
+   \end{bf}
+  \end{center}
+
+  \fontsize{14}{21}\selectfont
+  \vspace{5cm}
+
+
+  \noindent\begin{tabularx}{\textwidth}{ X >{\centering}p{4cm} p{1cm} c }
+   Студент: & & & Подобедов В. В. \\ \cline{2-2} \cline{4-4}
+   & \fontsize{10}{15}\selectfont дата, подпись & & \fontsize{10}{15}\selectfont Ф.И.О. \\
+   Преподаватель: & & & Волкова Л. Л.\\ \cline{2-2} \cline{4-4}
+   & \fontsize{10}{15}\selectfont дата, подпись & & \fontsize{10}{15}\selectfont Ф.И.О.
+  \end{tabularx}
+
+  \vspace{\fill}
+
+  \begin{center}
+   \it{Москва}, 2023
+  \end{center}
+
+  \thispagestyle{empty}
+\end{titlepage}
+
+\renewcommand{\contentsname}{Содержание}
+\setcounter{page}{2}
+\tableofcontents
+
+\newpage
+\begin{center}
+   \section*{Введение} 
+\addcontentsline{toc}{section}{Введение}
+\end{center}
+\justifying
+\textbf{Цель лабораторной работы}: реализовать алгоритмы сжатия по Хаффману.
+
+Для достижения поставленной цели требуется решить следующие \textbf{задачи}.
+\begin{enumerate}
+\item Описать сжатие по Хаффману.
+\item Реализовать сжатие файла.
+\item Реализовать возможность считывать данные из файла.
+\item Реализовать возможность записать ответ в бинарный файл.
+\item Выполнить тестирование реализации разработанного алгоритма.
+\end{enumerate}
+
+Согласно варианту, требуется разработать сжатие файла по Хаффману для исходного кода программы на LISP.
+
+\newpage
+\begin{center}
+   \section{Аналитическая часть} 
+\end{center}
+
+\textbf{Сжатие файла по алгоритму Хаффмана}~\cite{book} --- это метод кодирования данных, который использует переменные длины кодовых слов для представления символов в исходном тексте. Он основан на идее присвоения более коротких кодов более часто встречающимся символам и более длинных кодов менее часто встречающимся символам.
+
+\textbf{LISP} --- это  функциональный язык программирования, который известен своим использованием списков как основной структуры данных и кода. Файлы LISP могут содержать определения функций, переменных, структур данных, а также вызовы функций, операции и другие выражения на языке LISP.
+
+\newpage
+\begin{center}
+    \section{Конструкторская часть}
+\end{center}
+
+\subsection{Создание дерева Хаффмана}
+\begin{enumerate}
+    \item Подсчет частот символов.
+    \begin{itemize}
+        \item[---] Создать пустой словарь (map) ``freq'', где будут храниться частоты символов.
+        \item[---] Пройтись по всем символам в тексте и увеличить частоту символа в словаре ``freq''. 
+    \end{itemize}
+    \item Создание приоритетной очереди.
+        \begin{itemize}
+        \item[---] Приоритетная очередь ``pq'' используется для хранения узлов дерева.
+        \item[---] Для каждой буквы из словаря ``freq'' создать узел и поместить его в приоритетную очередь ``pq''. 
+    \end{itemize}
+    \item Построение дерева Хаффмана.
+        \begin{itemize}
+        \item[---] Выполнять нижеперечисленные действия, пока в приоритетной очереди не останется только один узел.
+        \item[---] Извлечь два узла с минимальными частотами (две самые редкие буквы). Создать новый узел с суммой частот этих двух узлов и добавить обратно в очередь.
+    \end{itemize}
+    \item Получение корня дерева.
+    \begin{itemize}
+        \item[---] Корень дерева Хаффмана остается в приоритетной очереди после всех итераций. Извлечь его из очереди и присвоить его корню дерева Хаффмана.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Кодирование элементов}
+\begin{enumerate}
+    \item Функция ``encode'' заполняет словарь ``huffmanCode'' кодами Хаффмана для каждой буквы.
+    \item Параметры функции.
+    \begin{itemize}
+        \item[---] ``Node* root'' --- указатель на текущий узел дерева Хаффмана, начиная с корня.
+        \item[---] ``string str'' --- строка, содержащая текущий код Хаффмана для данного узла.
+        \item[---] ``map<char, string> \&huffmanCode''' --- словарь, в который мы записываем коды Хаффмана для символов. 
+    \end{itemize}
+    \item Проверка наличия узла.
+    \begin{itemize}
+        \item[---] Если текущий узел ``root'' равен ``nullptr'', то выйти из функции, так как достигнут конец ветви дерева.
+    \end{itemize}
+    \item Проверка листовых узлов.
+    \begin{itemize}
+        \item[---] Провеить, является ли текущий узел листовым, то есть у него нет потомков. Если это лист, записать текущий код ``str'' в словарь ``huffmanCode'' по ключу ``root->ch''. 
+    \end{itemize}
+    \item Рекурсивный обход дерева.
+    \begin{itemize}
+        \item[---] Рекурсивно вызвать ``encode'' для левого потомка текущего узла, добавить к текущему коду символа "$0$".
+        \item[---] Рекурсивно вызвать ``encode'' для правого потомка текущего узла, добавить к текущему коду символа "$1$".
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Вычисление коэффициента сжатия}
+\begin{enumerate}
+    \item Подготовка переменных.
+    \begin{itemize}
+        \item[---] ``int bit\_1 = text.size() * 8'' рассчитать общее количество битов в исходном тексте. Умножение на 8 осуществляется, потому что каждый символ представляется 8 битами в стандартной кодировке ASCII.
+        \item[---] ``int bit\_2 = 0'' эта переменная будет использоваться для подсчета общего количества битов в закодированном тексте.
+    \end{itemize}
+    \item Подсчет битов закодированного текста.
+    \begin{itemize}
+        \item[---] Цикл ``for'' проходит по каждой паре в словаре ``huffmanCode'', который содержит символы и их соответствующие коды Хаффмана.
+        \item[---] Для каждой пары вычислить количество битов, занимаемых кодом Хаффмана для символа ``pair.second.size()'' и умножить на частоту символа в исходном тексте ``freq.at(pair.first)''. Это происходит потому, что сжатие зависит от того, сколько битов занимает каждый символ после кодирования и как часто он встречается в исходном тексте. Полученные значения присвоить переменной ``bit\_2''.
+    \end{itemize}
+    \item Вычисление коэффициента сжатия.
+    \begin{itemize}
+        \item[---] ``(bit\_1 + 0.0) / bit\_2'' Рассчитывает отношение количества битов исходного текста к количеству битов закодированного текста. Используется тип double, чтобы сохранить десятичную часть коэффициента.
+    \end{itemize}
+\end{enumerate}
+
+\newpage
+\begin{center}
+    \section{Технологическая часть}
+\end{center}
+
+Лабораторная работа была реализована на языке программирования C++. Кроме стандартной библиотеки <iostream>, которая предоставляет возможность пользоваься средствами ввода-вывода для стандартной консоли, были подключена библиотека <queue>. Она представляет собой контейнер, который работает по принципу FIFO и обладает собственным набором функций. Была подключена библиотека <map> --- контейнер, представляющий отображение ключей на значения. Библиотека <vector> --- это  динамический массив, который обеспечивает быстрый доступ к элементам и динамическое изменение размера.Также была подключена библиотека <string> для пользования строками. Был также написан стек на ссылках. Для чтения и записи данных из/в файл была подключена библиотека <fstream>.
+
+Далее приведен листинг реализации стека (листинг~\ref{lst:label1}).
+\begin{lstlisting}[caption={Исходный код программы для сжатия по Хаффману},label={lst:label1}]
+#include <iostream>
+#include <fstream>
+#include <queue>
+#include <map>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+struct Node {
+	char ch;
+	int freq;
+	Node *left, *right;
+};
+
+struct Compare {
+	bool operator()(Node* l, Node* r) {
+		return (l->freq > r->freq);
+	}
+};
+
+Node* getNode(char ch, int freq, Node* left, Node* right) {
+	Node* node = new Node();
+	node->ch = ch;
+	node->freq = freq;
+	node->left = left;
+	node->right = right;
+	return node;
+}
+
+void encode(Node* root, string str, map<char, string> &huffmanCode) {
+	if (root == nullptr) return;
+	if (!root->left && !root->right) {
+		huffmanCode[root->ch] = str;
+	}
+	encode(root->left, str + "0", huffmanCode);
+	encode(root->right, str + "1", huffmanCode);
+}
+
+void writeHuffmanCodesToFile(const map<char, string>& huffmanCode, const string& encodedText, const map<char, int>& freq) {
+	ofstream outputFile("C:\\Users\\Kononova\\Desktop\\huffman_codes.bin", ios::binary);
+
+	if (outputFile.is_open()) {
+		for (const auto& pair : huffmanCode) {
+			outputFile.put(pair.first);
+
+			int frequency = freq.at(pair.first);
+			outputFile.write(reinterpret_cast<const char*>(&frequency), sizeof(frequency));
+
+			char codeLength = static_cast<char>(pair.second.length());
+			outputFile.put(codeLength);
+		}
+
+		for (char ch : encodedText) {
+			outputFile.put(ch);
+		}
+
+		outputFile.close();
+		cout << "Данные успешно записаны в бинарный файл 'huffman_codes.bin'" << endl;
+	}
+	else {
+		cout << "Невозможно открыть файл для записи" << endl;
+	}
+}
+
+void winnings(string text, const map<char, string>& huffmanCode, const map<char, int>& freq) {
+	int bit_1 = text.size() * 8;
+	int bit_2 = 0;
+	
+	for (auto &pair : huffmanCode) {
+		bit_2 += pair.second.size() *  freq.at(pair.first);
+	}
+	double win = (bit_1 + 0.0) / bit_2;
+	cout << "Сжатие в " << win << " раз" << endl;
+}
+
+void buildHuffmanTree(string text) {
+	map<char, int> freq;
+	for (char ch : text) {
+		freq[ch]++;
+	}
+
+	priority_queue<Node*, vector<Node*>, Compare> pq;	
+
+	for (auto pair : freq) {
+		pq.push(getNode(pair.first, pair.second, nullptr, nullptr));
+	}
+
+	while (pq.size() != 1) {
+		Node* left = pq.top(); pq.pop();
+		Node* right = pq.top(); pq.pop();
+
+		int sumFreq = left->freq + right->freq;
+		pq.push(getNode('\0', sumFreq, left, right));
+	}
+
+	Node* root = pq.top();
+
+	map<char, string> huffmanCode;
+	encode(root, "", huffmanCode);
+
+	string encodedText;
+	for (char ch : text) {
+		encodedText += huffmanCode[ch];
+	}
+
+	cout << "Частоты букв: " << endl;
+	for (auto pair : freq) {
+		cout << pair.first << " : " << pair.second << endl;
+	}
+	cout << endl;
+
+	cout << "Код букв: " << endl;
+	for (auto pair : huffmanCode) {
+		cout << pair.first << " : " << pair.second << endl;
+	}
+	cout << endl;
+
+	cout << "Закодированный текст по Хаффману: " << encodedText << endl;
+
+	writeHuffmanCodesToFile(huffmanCode, encodedText, freq);
+	cout << endl;
+	winnings(text, huffmanCode, freq);
+}
+
+int main() {
+	setlocale(0, "");
+	ifstream file("C:\\Users\\Kononova\\Desktop\\huff.lisp");
+	string text = "";
+	if (file.is_open()) {
+		string text_help = "";
+		while (getline(file, text_help)){
+			text += text_help;
+			text_help = "";
+		}
+		file.close();
+	}
+	else {
+		cout << "Невозможно открыть файл";
+		return 0;
+	}
+	cout << "Прочитанная фраза: " <<text << endl;
+	buildHuffmanTree(text);
+	
+	return 0;
+}
+\end{lstlisting}
+
+
+\newpage
+\begin{center}
+    \section{Исследовательская часть}
+\end{center}
+
+Далее на рисунках представлен результат работы программы. Размер входного файла с каждым тестом уменьшается на $20~\%$.
+
+Результат работы программы, где из файла считывается программа на LISP, сжимает данные по алгоритму Хаффмана и записывает полученный ответ в бинарный файл.  Результат приведён на рис.~\ref{img:grap1}. 
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm]{test1_1.PNG}}
+    \caption{Пример №1}
+    \label{img:grap1}
+\end{figure}
+\newpage
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm]{test1_2.PNG}}
+    \caption{Пример №1 (продолжение)}
+\end{figure}
+
+\newpage
+Результат работы программы, где из файла считывается программа на LISP, сжимает данные по алгоритму Хаффмана и записывает полученный ответ в бинарный файл.  Результат приведён на рис.~\ref{img:grap2}. 
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm]{test2_1.PNG}}
+    \caption{Пример №2}
+    \label{img:grap2}
+\end{figure}
+\newpage
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm]{test2_2.PNG}}
+    \caption{Пример №2 (продолжение)}
+\end{figure}
+
+\newpage
+Результат работы программы, где из файла считывается программа на LISP, сжимает данные по алгоритму Хаффмана и записывает полученный ответ в бинарный файл.  Результат приведён на рис.~\ref{img:grap3}. 
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm]{test3_1.PNG}}
+    \caption{Пример №3}
+    \label{img:grap3}
+\end{figure}
+\newpage
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm]{test3_2.PNG}}
+    \caption{Пример №3 (продолжение)}
+\end{figure}
+
+\newpage
+Результат работы программы, где из файла считывается программа на LISP, сжимает данные по алгоритму Хаффмана и записывает полученный ответ в бинарный файл.  Результат приведён на рис.~\ref{img:grap4}. 
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm]{test4_1.PNG}}
+    \caption{Пример №4}
+    \label{img:grap4}
+\end{figure}
+\newpage
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm]{test4_2.PNG}}
+    \caption{Пример №4 (продолжение)}
+\end{figure}
+
+\newpage
+Результат работы программы, где из файла считывается программа на LISP, сжимает данные по алгоритму Хаффмана и записывает полученный ответ в бинарный файл.  Результат приведён на рис.~\ref{img:grap5}. 
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm]{test5_1.PNG}}
+    \caption{Пример №5}
+    \label{img:grap5}
+\end{figure}
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm]{test5_2.PNG}}
+    \caption{Пример №5 (продолжение)}
+\end{figure}
+
+\newpage
+Результат работы программы, где из файла считывается программа на LISP, сжимает данные по алгоритму Хаффмана и записывает полученный ответ в бинарный файл.  Результат приведён на рис.~\ref{img:grap6}. 
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm]{test6.PNG}}
+    \caption{Пример №6}
+    \label{img:grap6}
+\end{figure}
+
+\newpage
+Результат работы программы, где из файла считывается программа на LISP, сжимает данные по алгоритму Хаффмана и записывает полученный ответ в бинарный файл.  Результат приведён на рис.~\ref{img:grap7}. 
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm]{test7.PNG}}
+    \caption{Пример №7}
+    \label{img:grap7}
+\end{figure}
+
+\newpage
+Результат работы программы, где из файла считывается программа на LISP, сжимает данные по алгоритму Хаффмана и записывает полученный ответ в бинарный файл.  Результат приведён на рис.~\ref{img:grap8}. 
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm]{test8.PNG}}
+    \caption{Пример №8}
+    \label{img:grap8}
+\end{figure}
+
+\newpage
+Результат работы программы, где из файла считывается программа на LISP, сжимает данные по алгоритму Хаффмана и записывает полученный ответ в бинарный файл.  Результат приведён на рис.~\ref{img:grap9}. 
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm]{test9.PNG}}
+    \caption{Пример №9}
+    \label{img:grap9}
+\end{figure}
+
+\newpage
+Результат работы программы, где из файла считывается программа на LISP, сжимает данные по алгоритму Хаффмана и записывает полученный ответ в бинарный файл.  Результат приведён на рис.~\ref{img:grap10}. 
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm]{test10.PNG}}
+    \caption{Пример №10}
+    \label{img:grap10}
+\end{figure}
+
+Анализируя выполненные тесты, можно отметить, что при увеличении объема данных алгоритм Хаффмана становится более эффективным в сжатии по сравнению с простым методом сжатия. Это происходит благодаря созданию оптимального кода для представления данных: наиболее часто встречающиеся символы кодируются более короткими кодами, что позволяет значительно сократить общий размер данных.
+
+Однако, когда данные становятся более случайными или каждый символ встречается с примерно одинаковой частотой, эффективность сжатия по Хаффману может уменьшаться. Это происходит из-за того, что оптимальное кодирование для равномерно распределенных данных не обеспечивает большого преимущества в сжатии.
+
+Таким образом, при увеличении объема данных сжатие по Хаффману обычно стремится к более эффективному сжатию, но его эффективность может варьироваться в зависимости от характера данных и распределения символов в них.
+
+\newpage
+\begin{center}
+    \section*{Заключение}
+    \addcontentsline{toc}{section}{Заключение}
+\end{center}
+
+Цель лабораторной работы достигнута: реализован алгоритм сжатия по Хаффману.
+
+Для достижения поставленной цели требуется решить следующие \textbf{задачи}.
+\begin{enumerate}
+\item Описано сжатие по Хаффману.
+\item Реализовано сжатие файла.
+\item Реализована возможность считывать данные из файла.
+\item Реализована возможность записать ответ в бинарный файл.
+\item Выполнено тестирование реализации разработанного алгоритма.
+\end{enumerate}
+
+\newpage
+\begin{center}
+\begin{thebibliography}{}
+\addcontentsline{toc}{section}{Список используемых источников}
+\bibitem{book} Котиева, Х. М. Сжатие данных без потерь. Использование алгоритма Хаффмана / Х. М. Котиева. — Текст : непосредственный // Молодой ученый. — 2020. — № 35 (325 с.).
+\end{thebibliography}
+\end{center}
+
+\end{document}

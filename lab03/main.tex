@@ -1,0 +1,562 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage{indentfirst, setspace}
+\usepackage{tabularx, multirow}
+\usepackage[normalem]{ulem}
+\usepackage[style=russian]{csquotes}
+\usepackage[english,russian]{babel}
+\usepackage{hyperref}
+\usepackage{ragged2e}
+\usepackage{caption}
+\usepackage{wrapfig}
+\usepackage{amsmath}
+\usepackage{tikz}
+\makeatletter
+\def\@biblabel#1{#1. }
+\makeatother
+\captionsetup{labelsep=endash}
+\usepackage{listings}
+\linespread{1.3}
+\lstset{
+  language=C++, % Язык программирования (можно выбрать другой)
+  basicstyle=\ttfamily\small, % Основной стиль шрифта
+  keywordstyle=\color{blue}, % Стиль ключевых слов
+  breaklines=true,
+  commentstyle=\color{green}, % Стиль комментариев
+  stringstyle=\color{red}, % Стиль строк
+  extendedchars=\true,
+  showstringspaces=false,
+}
+
+\usepackage[left=20mm, top=15mm, right=15mm, bottom=20mm]{geometry}
+
+\begin{document}
+\begin{titlepage}
+     \fontsize{12}{12}\selectfont
+
+  {\centering
+
+   \begin{bf}
+
+    \begin{wrapfigure}{l}{19mm}
+        \includegraphics[width=22mm]{emblem.jpeg}
+    \end{wrapfigure}
+
+
+    \noindent Министерство науки и высшего образования Российской Федерации
+
+    \noindent Федеральное государственное бюджетное образовательное учреждение высшего образования
+
+    \noindent \enquote{Московский государственный технический унверситет
+
+     \noindent имени Н.Э. Баумана
+
+     \noindent (национальный исследовательский университет)}
+
+    \noindent (МГТУ им. Н.Э. Баумана)
+
+   \end{bf}
+  }
+
+  \vspace{0.4cm}
+
+  {\setstretch{0.1}
+   \noindent\rule{\textwidth}{1mm}
+   \noindent\rule{\textwidth}{0.5mm}
+
+  }
+
+  \fontsize{14}{21}\selectfont
+
+  \noindent\begin{tabularx}{\textwidth}{l >{\centering\arraybackslash}X}
+   ФАКУЛЬТЕТ & \flqq Фундаментальные Науки\frqq \\ \cline{2-2}
+
+   КАФЕДРА & ФН-12 \flqq Математическое моделирование\frqq \\ \cline{2-2}
+  \end{tabularx}
+
+
+  \vspace{1cm}
+
+
+  \begin{center}
+   \begin{bf}
+
+    \fontsize{24}{36}\selectfont
+    ОТЧЕТ
+
+    \fontsize{20}{30}\selectfont
+    ПО ЛАБОРАТОРНОЙ РАБОТЕ НА ТЕМУ:
+
+    Реализация стека и дека
+
+   \end{bf}
+  \end{center}
+
+  \fontsize{14}{21}\selectfont
+  \vspace{5cm}
+
+
+  \noindent\begin{tabularx}{\textwidth}{ X >{\centering}p{4cm} p{1cm} c }
+   Студент: & & & Подобедов В. В. \\ \cline{2-2} \cline{4-4}
+   & \fontsize{10}{15}\selectfont дата, подпись & & \fontsize{10}{15}\selectfont Ф.И.О. \\
+   Преподаватель: & & & Волкова Л. Л.\\ \cline{2-2} \cline{4-4}
+   & \fontsize{10}{15}\selectfont дата, подпись & & \fontsize{10}{15}\selectfont Ф.И.О.
+  \end{tabularx}
+
+  \vspace{\fill}
+
+  \begin{center}
+   \it{Москва}, 2023
+  \end{center}
+
+  \thispagestyle{empty}
+\end{titlepage}
+
+\renewcommand{\contentsname}{Содержание}
+\setcounter{page}{2}
+\tableofcontents
+
+\newpage
+\begin{center}
+   \section*{Введение} 
+\addcontentsline{toc}{section}{Введение}
+\end{center}
+
+\justifying
+\textbf{Цель лабораторной работы}: разработать стек и дек.
+
+Для достижения поставленной цели требуется решить следующие \textbf{задачи}.
+\begin{enumerate}
+\item Описать две схемы хранения данных в стеке и деке.
+\item Разработать алгоритмы, необходимые для хранения данных.
+\item Реализовать разработанные алгоритмы.
+\item Выполнить тестирование реализации разработанных алгоритмов.
+\end{enumerate}
+
+Согласно варианту, требуется разработать следующие две схемы.
+\begin{enumerate}
+\item Стек. Написать функции добавления элементов, удаления элементов и вывод содержимого в консоль.
+\item Дек. разработать функции добавления, удаления данных и их вывод.
+\end{enumerate}
+
+\newpage
+\begin{center}
+   \section{Аналитическая часть} 
+\end{center}
+
+\textbf{Стек}\cite{book} --- абстрактный тип данных, представляющий собой список элементов, организованных по принципу LIFO (англ. last in — first out, «последним пришёл — первым вышел»). Стек является очередью с одной стороной входа и выхода элементов. 
+
+\textbf{Дек}\cite{book} --- структура данных типа «список», функционирующая одновременно по двум принцам организации данных: LIFO и FIFO (англ. first in — first out, «первым пришёл — первым вышел»). Определить дек можно как очередь с двумя сторонами, так и стек, имеющий два конца. То есть данный подвид списка характерен двухсторонним доступом: выполнение поэлементной операции, определенной над деком, предполагает возможность выбора одной из его сторон в качестве активной.
+
+\newpage
+\begin{center}
+    \section{Конструкторская часть}
+\end{center}
+
+\subsection{Структура стека} 
+Стек состоит из ячеек, которые представлены в виде структуры, содержащей какие-либо данные и указатель на следующий элемент. Для удобного восприятия стек представлен на рисунке ~\ref{img:stack}. 
+\begin{figure}[h!]
+    \center{\includegraphics[width=10cm, height=10cm]{stack.jpeg}}
+    \caption{Схематичное представление стека}
+    \label{img:stack}
+\end{figure}
+
+Как можно увидеть стек хранит в одном блоке данные и ``*next'' --- ссылку на последующий элемент. Иными словами в ячейке ``*next'' хранится адрес на следующую ячейку.
+
+Над стеком и его элементами можно выполнять следующие операции:
+\begin{itemize}
+    \item[---] Добавление элемнта в стек.
+    \item[---] Удаление элемента из стека.
+    \item[---] Проверка стека на пустоту.
+    \item[---] Определение количства элементов в стеке.
+    \item[---] Вывод всего стека.
+\end{itemize}
+
+\subsubsection{Добавление элемента}
+Если в стеке еще не было элементов, то создается блок, в котором в ячейку ``данные'' заносится необходимая информация для хранения. Поскольку после этого блока нет больше следующих блоков, то ячейка ``*next'' имеет нулевой указатель. При добавении блока, если уже были созданы блоки, создается новый блок и ячейка ``*next'' в предыдущем блоке начинает ссылаться на созданный блок, а в ячейку ``данные'' добавляется информация.
+
+\subsubsection{Удаление элемента}
+При удалении данных, предпоследний блок изменяет ячейку ``*next'' на нулевой указатель, а данные из последнего блока удаляются.
+
+\subsubsection{Проверка стека на пустоту}
+Чтобы проверить стек на наличие элементов, необходимо посчитать количество блоков в стеке. Если количество будет больше единицы, то стек не пустой.
+
+\subsubsection{Количество элементов}
+Для подсчета количество элементов в стеке нужно создать курсор который будет идти по ячейкам ``*next'' и считать их количество, пока не встретится нулевой указатель.
+
+\subsubsection{Вывод данных}
+Аналогично подсчету элементов необходимо создать курсор, который будет идти по ссылкам каждого блока и выводить данные из блока стека.
+
+\subsection{Структура дека} Аналогично стеку содержит блоки в которых хранятся данные и указатель на следующий элемент. Дек схематично изображен на рисунке ~\ref{img:dec}. 
+\begin{figure}[h!]
+    \center{\includegraphics{dec.png}}
+    \caption{Схематичное представление дека}
+    \label{img:dec}
+\end{figure}
+
+Дек имеет аналогичную структуру, как и стек, в отлчии от того, что добавлять и удалять элементы можно с двух сторон (с конца и с начала). Все остальные функции работают аналогично, как и в стеке.
+
+\subsubsection{Добавление элемента}
+При добавлении элемента в дек необходимо написать две функции, которые добавляют элемент либо в начало либо в конец структуры. Если есть необходимость добавить блок в начало то, создается блок и в ячейку ``next'' добавляется ссылка на бывший начальный элемент, а в ячейку ``info'' заносятся необходимые данные. При добавлении блока в конец дека ячейка ``next'' последнего элеменета изменяется на указатель на вновь созданный блок. Данные добавляются в ячейку ``info''.
+
+\subsubsection{Удаление элемнента}
+Как и в добавлении элемента в деке можно удалять элемент с любого конца. При удалении элемента из начала дека ячейки ``info'' и ``next'' удаляются методо delete. Если удаляется блок из конца дека, то в предпоследнем блоке ячейку ``next'' необходимо изменить на нулевую ссылку, а последний блок также удалить, воспользовавшись методом delete. 
+
+\newpage
+\begin{center}
+    \section{Технологическая часть}
+\end{center}
+Лабораторная работа была реализована на языке программирования C++. Кроме стандартной библиотеки <iostream>, которая предоставляет возможность пользоваься средствами ввода-вывода для стандартной консоли, была подключена библиотека <fstream>. Она включает в себя набор классов, методов и функций, которые предоставляют интерфейс для чтения/записи данных из/в файл. С помощью шаблонных классов ``List'', который описывает саму структуру стека и ``Node'', который описывает блок стека, был реализован стек на ссылках. 
+
+Методы, разработанные в классе, следующие.
+\begin{itemize}
+    \item[---] Метод ``push\_back'' --- метод, который добавляет элемент в конец стека.
+    \item[---] метод ``pop\_back'' --- метод, который удаляет последний элемент из стека.
+    \item[---] Метод ``GetSize'' --- метод, который печатает количество элементов в стеке.
+    \item[---] Метод ``check'' --- метод, который проверяет стек на пустоту.
+    \item[---] Метод ``print'' --- метод, который выводит весь стек в консоль.
+\end{itemize}
+В программе данные считываются из файла и заносятся в стек. Далее выводится количество элементов, которое хранится в стеке, удаляется последний элемент и проверяется стек на наличие элементов. Если стек не путой, то выводятся данные.
+
+Далее приведен листинг реализации стека (листинг~\ref{lst:label1}).
+\begin{lstlisting}[caption={Исходный код программы для реализации стека},label={lst:label1}]
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+template<typename T>
+class List {
+public:
+	List() {
+		size = 0;
+		head = nullptr;
+	}
+
+	~List() {}
+
+	void push_back(T date) {
+		if (head == nullptr) {
+			head = new Node<T>(date);
+		}
+		else {
+			Node<T> *current = this->head;
+			while (current->pNext != nullptr) {
+				current = current->pNext;
+			}
+			current->pNext = new Node<T>(date);
+		}
+		size++;
+	}
+
+	int GetSize() {
+		return size;
+	}
+
+	void pop_back() {
+		Node<T> *previous = this->head;
+		for (int i = 0; i < GetSize() - 2; i++){
+			previous = previous->pNext;
+		}
+		Node<T> *toDelete = previous->pNext;
+		previous->pNext = toDelete->pNext;
+		delete toDelete;
+		size--;
+	}
+
+	void check() {
+		if (size == 0) {
+			cout << "Стек пустой" << endl;
+		}
+		else {
+			cout << "В стеке хранятся данные" << endl;
+		}
+	}
+
+	void print() {
+		Node<T> *current = this->head;
+		while (current != nullptr) {
+			cout << current->date;			
+			current = current->pNext;
+		}
+	}
+
+private:
+
+	template<typename T>
+	class Node {
+	public:
+		Node * pNext;
+		T date;
+
+		Node(T date, Node * pNext = nullptr) {
+			this->date = date;
+			this->pNext = pNext;
+		}
+	};
+	Node<T> *head;
+	int size;
+};
+
+
+int main() {
+	setlocale(0, "");
+
+	string line;
+	ifstream myfile("C:\\Users\\Kononova\\Desktop\\stack_data.txt");
+
+	if (myfile.is_open())
+	{
+		char c;
+		while (myfile.get(c))
+		{
+			line = line + c;
+		}
+		myfile.close();
+	}
+	else
+	{
+		cout << "Не удалось открыть файл для считывания";
+	}
+
+	List<char> lst;
+
+	for (int i = 0; i < line.size(); i++) {
+		lst.push_back(line[i]);
+	}
+	cout << "Количество элементов, включая пробелы: " << lst.GetSize() << endl;
+	cout << "Удалили послдний элемент" << endl;
+	lst.pop_back();
+	cout << "Добавим в конец 5 " << endl;
+	lst.push_back('5');
+	lst.check();
+	if (lst.GetSize() != 0) { 
+		lst.print();
+	}
+	else{
+		cout << "стек пустой";
+	}
+
+	return 0;
+}
+\end{lstlisting}
+
+Также, как и в стеке, дек был реализован с помощью шаблонных классов ``List'' и ``Node''. Методы, характерные для дека, следующие.
+\begin{itemize}
+    \item[---] Метод ``push\_back'' --- метод, который добавляет элемент в конец дек.
+    \item[---] Метод ``push\_front'' --- метод, который добавляет элемент в начало дек.
+    \item[---] метод ``pop\_back'' --- метод, который удаляет последний элемент из дек.
+    \item[---] метод ``pop\_back'' --- метод, который удаляет последний элемент из дек.
+    \item[---] Метод ``GetSize'' --- метод, который печатает количество элементов в дек.
+    \item[---] Метод ``check'' --- метод, который проверяет дек на пустоту.
+    \item[---] Метод ``print'' --- метод, который выводит весь дек в консоль.
+\end{itemize}
+Далее приведен листинг реализации стека (листинг~\ref{lst:label2}).
+\begin{lstlisting}[caption={Исходный код программы для реализации дека},label={lst:label2}]
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+template<typename T>
+class List {
+public:
+	List() {
+		size = 0;
+		head = nullptr;
+	}
+
+	~List() {}
+
+	void push_back(T date) {
+		if (head == nullptr) {
+			head = new Node<T>(date);
+		}
+		else {
+			Node<T> *current = this->head;
+			while (current->pNext != nullptr) {
+				current = current->pNext;
+			}
+			current->pNext = new Node<T>(date);
+		}
+		size++;
+	}
+
+	void push_front(T data) {
+		head = new Node<T>(data, head);
+		size++;
+	}
+
+	int GetSize() {
+		return size;
+	}
+
+	void pop_back() {
+		Node<T> *previous = this->head;
+		for (int i = 0; i < GetSize() - 2; i++){
+			previous = previous->pNext;
+		}
+		Node<T> *toDelete = previous->pNext;
+		previous->pNext = toDelete->pNext;
+		delete toDelete;
+		size--;
+	}
+
+	void pop_front(){
+		Node<T> *temp = head;
+		head = head->pNext;
+		delete temp;
+		size--;
+	}
+
+	void check() {
+		if (size == 0) {
+			cout << "Стек пустой" << endl;
+		}
+		else {
+			cout << "В стеке хранятся данные" << endl;
+		}
+	}
+
+	void print() {
+		Node<T> *current = this->head;
+		while (current != nullptr) {
+			cout << current->date;			
+			current = current->pNext;
+		}
+	}
+
+private:
+
+	template<typename T>
+	class Node {
+	public:
+		Node * pNext;
+		T date;
+
+		Node(T date, Node * pNext = nullptr) {
+			this->date = date;
+			this->pNext = pNext;
+		}
+	};
+	Node<T> *head;
+	int size;
+};
+
+
+int main() {
+	setlocale(0, "");
+
+	string line;
+	ifstream myfile("C:\\Users\\Kononova\\Desktop\\stack_data.txt");
+
+	if (myfile.is_open())
+	{
+		char c;
+		while (myfile.get(c))
+		{
+			line = line + c;
+		}
+		myfile.close();
+	}
+	else
+	{
+		cout << "Не удалось открыть файл для считывания";
+	}
+
+	List<char> lst;
+
+	for (int i = 0; i < line.size(); i++) {
+		lst.push_back(line[i]);
+	}
+	cout << "Количество элементов, включая пробелы: " << lst.GetSize() << endl;
+	cout << "Удалили послдний элемент" << endl;
+	lst.pop_back();
+	cout << "Удалили первый элемент" << endl;
+	lst.pop_front();
+	cout << "Добавим в начало r " << endl;
+	lst.push_front('r');
+	cout << "Добавим в конец e " << endl;
+	lst.push_back('e');
+	lst.check();
+	if (lst.GetSize() != 0) { 
+		lst.print();
+	}
+	else{
+		cout << "Дек пустой";
+	}
+
+	return 0;
+}
+\end{lstlisting}
+
+В программе данные считываются из файла и заносятся в дек. Выводится количество элементов, которое хранится в деке, удаляется последний и начальный элемент, добавляется в начало и в конец по элементу и выводятся данные.
+
+\newpage
+\begin{center}
+    \section{Исследовательская часть}
+\end{center}
+
+Далее на рисунках предствалены результаты программы и входной файл, в котором лежат данные.
+
+Результат работы программы для стека приведен на рис. ~\ref{img:grap1}. 
+\begin{figure}[h!]
+    \center{\includegraphics{stack_1.PNG}}
+    \caption{Работоспособность стека}
+    \label{img:grap1}
+\end{figure}
+
+Результат работы программы для стека приведен на рис. ~\ref{img:grap2}. 
+\begin{figure}[h!]
+    \center{\includegraphics{stack_2.PNG}}
+    \caption{Работоспособность стека}
+    \label{img:grap2}
+\end{figure}
+
+\newpage
+Результат работы программы для дека приведен на рис. ~\ref{img:grap3}. 
+\begin{figure}[h!]
+    \center{\includegraphics{deck_1.PNG}}
+    \caption{Работоспособность дека}
+    \label{img:grap3}
+\end{figure}
+
+Результат работы программы для дека приведен на рис. ~\ref{img:grap4}. 
+\begin{figure}[h!]
+    \center{\includegraphics{deck_2.PNG}}
+    \caption{Работоспособность дека}
+    \label{img:grap4}
+\end{figure}
+
+\newpage
+\begin{center}
+    \section*{Заключение}
+    \addcontentsline{toc}{section}{Заключение}
+\end{center}
+В результате выполнения лабораторной работы были выполнены все задачи.
+\begin{enumerate}
+\item Описаны две схемы хранения данных в стеке и деке.
+\item Разработаны алгоритмы, необходимые для хранения данных.
+\item Реализованы разработанные алгоритмы.
+\item Выполнено тестирование реализации разработанных алгоритмов.
+\end{enumerate}
+
+Согласно варианту, требуется разработаны следующие две схемы.
+\begin{enumerate}
+\item Стек. Написаны функции добавления элементов, удаления элементов и вывод содержимого в консоль.
+\item Дек. разработаны функции добавления, удаления данных и их вывод.
+\end{enumerate}
+
+Стек и дек необходимы для хранения информации. Дек, в отличии от стека является более гибким хранилищем информации, так как он располагает большим набором функций. 
+
+\newpage
+\begin{center}
+\begin{thebibliography}{}
+\addcontentsline{toc}{section}{Список используемых источников}
+\bibitem{book} Е.А. Конова , Г.А. Поллак, А.М. Ткачев. Структуры данных. Программирование на языке С и С++. Учебное пособие, под ред. Поллак Г.А., Челябинск, Издательство ЮУрГУ, 2004 
+\end{thebibliography}
+\end{center}
+\end{document}

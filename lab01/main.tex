@@ -1,0 +1,615 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[normalem]{ulem}
+\usepackage{ragged2e}
+\usepackage[style=russian]{csquotes}
+\usepackage[english,russian]{babel}
+\usepackage{graphicx,wrapfig}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usepackage{caption}
+\captionsetup[table]{justification=raggedright,singlelinecheck=off}
+\captionsetup[lstlisting]{justification=raggedright,singlelinecheck=off}
+\captionsetup{labelsep=endash}
+\captionsetup[figure]{name={Рисунок}}
+\usepackage{listings}
+\usepackage{indentfirst, setspace}
+\usepackage{tabularx, multirow}
+\linespread{1.3}
+\lstset{
+  language=C++, % Язык программирования (можно выбрать другой)
+  basicstyle=\ttfamily\small, % Основной стиль шрифта
+  keywordstyle=\color{blue}, % Стиль ключевых слов
+  breaklines=true,
+  commentstyle=\color{green}, % Стиль комментариев
+  stringstyle=\color{red}, % Стиль строк
+  extendedchars=\true,
+  showstringspaces=false,
+}
+\usepackage[left=20mm, top=15mm, right=15mm, bottom=20mm]{geometry}
+
+\begin{document}
+\begin{titlepage}
+     \fontsize{12}{12}\selectfont
+
+  {\centering
+
+   \begin{bf}
+
+    \begin{wrapfigure}{l}{19mm}
+        \includegraphics[width=22mm]{emblem.jpeg}
+    \end{wrapfigure}
+
+
+    \noindent Министерство науки и высшего образования Российской Федерации
+
+    \noindent Федеральное государственное бюджетное образовательное учреждение высшего образования
+
+    \noindent \enquote{Московский государственный технический унверситет
+
+     \noindent имени Н.Э. Баумана
+
+     \noindent (национальный исследовательский университет)}
+
+    \noindent (МГТУ им. Н.Э. Баумана)
+
+   \end{bf}
+  }
+
+  \vspace{0.4cm}
+
+  {\setstretch{0.1}
+   \noindent\rule{\textwidth}{1mm}
+   \noindent\rule{\textwidth}{0.5mm}
+
+  }
+
+  \fontsize{14}{21}\selectfont
+
+  \noindent\begin{tabularx}{\textwidth}{l >{\centering\arraybackslash}X}
+   ФАКУЛЬТЕТ & \flqq Фундаментальные Науки\frqq \\ \cline{2-2}
+
+   КАФЕДРА & ФН-12 \flqq Математическое моделирование\frqq \\ \cline{2-2}
+  \end{tabularx}
+
+
+  \vspace{1cm}
+
+
+  \begin{center}
+   \begin{bf}
+
+    \fontsize{24}{36}\selectfont
+    ОТЧЕТ
+
+    \fontsize{20}{30}\selectfont
+    ПО ЛАБОРАТОРНОЙ РАБОТЕ НА ТЕМУ:
+
+    Редакционные расстояния
+
+   \end{bf}
+  \end{center}
+
+  \fontsize{14}{21}\selectfont
+  \vspace{5cm}
+
+
+  \noindent\begin{tabularx}{\textwidth}{ X >{\centering}p{4cm} p{1cm} c }
+   Студент: & & & Подобедов В. В. \\ \cline{2-2} \cline{4-4}
+   & \fontsize{10}{15}\selectfont дата, подпись & & \fontsize{10}{15}\selectfont Ф.И.О. \\
+   Преподаватель: & & & Волкова Л. Л.\\ \cline{2-2} \cline{4-4}
+   & \fontsize{10}{15}\selectfont дата, подпись & & \fontsize{10}{15}\selectfont Ф.И.О.
+  \end{tabularx}
+
+  \vspace{\fill}
+
+  \begin{center}
+   \it{Москва}, 2023
+  \end{center}
+
+  \thispagestyle{empty}
+\end{titlepage}
+
+
+\renewcommand{\contentsname}{Содержание}
+\setcounter{page}{2}
+\tableofcontents
+
+\newpage
+\begin{center}
+   \section*{Введение} 
+\addcontentsline{toc}{section}{Введение}
+\end{center}
+
+
+\vspace{5mm}
+\raggedright
+\justifying
+\textbf{Цель лабораторной работы}: провести сравнительный анализ алгоритмов поиска редакционных расстояний.
+
+
+Для достижения поставленной цели требуется решить следующие \textbf{задачи}.
+\begin{enumerate}
+\item Описать расстояния Левенштейна и Дамерау-Левенштейна.
+\item Разработать алгоритмы вычисления редакционных расстояний, согласно варианту.
+\item Реализовать разработанные алгоритмы.
+\item Выполнить тестирование реализации разработанных алгоритмов.
+\item Разработать программное обеспечение с двумя режимами работы --- режимом расчёта расстояний для введённых пользователем двух строк произвольной длины и режимом массированного замера процессорного времени для автоматически сгенерированных строк заданной длины.
+\item Провести сравнение временной эффективности реализации разработанных алгоритмов, проведя замеры процессорного времени их выполнения в зависимости от линейного размера строк одинаковой длины.
+\item Выполнить оценку емкостной эффективности разработанных алгоритмов в зависимости от линейных размеров строк (для рекурсивных алгоритмов дать оценку пиковой затрачиваемой памяти) Провести сравнение временной эффективности реализации разработанных алгоритмов, проведя замеры памяти, затрачиваемой реализацией разработанных алгоритмов в зависимости от линейных размеров строк (для рекурсивных алгоритмов замерить пиковую затрачиваемую память).
+\end{enumerate}
+
+Согласно варианту, требуется разработать следующие три алгоритма.
+\begin{enumerate}
+\item Алгоритм вычисления расстояния Левенштейна нерекурсивным методом, используя две строки.
+\item Алгоритм вычисления расстояния Дамерау-Левенштейна нерекурсивным методом, пользуясь матрицей и в конце программы вывести её содержимое.
+\item Алгоритм вычисления расстояния Дамерау-Левенштейна рекурсивным методом без кэша.
+\end{enumerate}
+
+
+\newpage
+\begin{center}
+   \section{Аналитическая часть} 
+\end{center}
+
+Расстояние между строками a и b можно найти при помощи некоторых редакционных расстояний. Рассмотрим их.
+
+Расстояние Левенштейна --- это метрика cходства между двумя строковыми последовательностями \cite{mpl}. Оно может быть рассчитано по формуле ~\ref{eq:Lev}:\\
+\begin{equation} \label{eq:Lev}
+d_{a, b}(i,j) =
+\begin{cases}
+    0 & i = 0, j = 0
+\\   i & j = 0, i > 0
+\\   j & i = 0, j > 0
+\\ \min \begin{cases}
+    d_{a, b}(i, j - 1) + 1
+\\  d_{a, b}(i - 1, j) + 1
+\\  d_{a, b}(i - 1, j - 1) + m(a[i], b[j])
+\end{cases}  & j > 0, i > 0  
+\end{cases}\\
+\end{equation}
+
+Нетрудно понять, что первые три строчки формулы заполнят первый столбец и первую строку матрицы. Для всех остальных ячеек матрицы используется четветрая формула. Стоит уделить внимание оператору ``m(a[i], b[j])''. Он сравнивает символы в слове, и, если они одинаковые, он дает 0, иначе --- 1.
+
+
+Расстояние Дамерау-Левенштейна вычисляется по формуле ~\ref{eq:Levv}:
+\begin{equation} \label{eq:Levv}
+d_{a, b}(i, j) = 
+\begin{cases} 
+\max(i, j) & \mbox{если } i \cdot j = 0;
+\\ \min \begin{cases} 
+d_{a, b}(i - 1, j) + 1
+\\d_{a, b}(i, j - 1) + 1
+\\d_{a, b}(i - 1, j - 1 ) + 1_{(a_i = b_j)}
+\\d_{a, b}(i - 2, j - 2) + 1
+\end{cases} & \mbox{если } i,j > 1, a_i = b_{j - 1}, a_{i - 1} = b_j;
+\\ \min \begin{cases} 
+d_{a, b}(i - 1, j) + 1
+\\d_{a, b}(i, j - 1) + 1
+\\d_{a, b}(i - 1, j - 1) + 1_{(a_i = b_j)}
+\end{cases} & \mbox{иначе} 
+\end{cases}\\
+\end{equation}
+
+\justifying
+Значительным отличием в нахождении расстояния Дамерау-Левенштейна от расстояния Левенштейна является транспозиция соседних символов. 
+
+Говоря об эффективности методов вычисления расстояния слов, хочется отметить рекурсивный способ Дамерау-Левенштейна с кэшем. Поскольку после каждого подсчета порождается еще три вычисления, рекурсия с кэшем может помочь сохранить процессорное время. Поэтому вместо $3^{k*l}$ раз, где k и l длина слов соответсвенно, нужно вычислить $k * l$ раз.
+Что касается других способов решения задачи, можно использовать нерекурсивный метод с заполнением матрицы размера $(k+1)*(l+1)$. Однако можно заметить, что для вычисления расстояния Левенштейна используются только числа предыдущей и вычисляемой строки.  Поэтому в каждый момент вычисления можно хранить две строки матрицы.
+
+\newpage
+\begin{center}
+    \section{Конструкторская часть}
+\end{center}
+Cхема алгоритма поиска расстояния Левенштейна нерекурсивным способом с хранением двук строк матрицы представлена на рис.~\ref{img:algLevNR}.
+\begin{figure}[h!]
+    \center{\includegraphics[width=5cm, height=22cm]{block_1}}
+    \caption{Cхема алгоритма поиска расстояния Левенштейна нерекурсивным способом}
+    \label{img:algLevNR}
+\end{figure}
+
+\newpage
+Cхема алгоритма поиска расстояния Дамерау-Левенштейна нерекурсивным способом с хранением матрицы представлена на рис.~\ref{img:algDLevNR}. \\
+\begin{figure}[h!]
+    \center{\includegraphics[width=5cm, height=22cm]{block_2}}
+    \caption{Cхема алгоритма поиска расстояния Дамерау-Левенштейна нерекурсивным способом с хранениемматрицы}
+    \label{img:algDLevNR}
+\end{figure}
+
+\newpage
+Cхема алгоритма поиска расстояния Дамерау-Левенштейна рекурсивным способом с хранением 3 строк матрицы представлена на рис.~\ref{img:algDLevNR2}. \\
+\begin{figure}[h!]
+    \center{\includegraphics[width=14cm, height=22cm]{block_3}}
+    \caption{Cхема алгоритма поиска расстояния Дамерау-Левенштейна рекурсивным способом с хранением 3 строк матрицы}
+    \label{img:algDLevNR2}
+\end{figure}
+
+\newpage
+\begin{center}
+    \section{Технологическая часть}
+\end{center}
+
+%\subsection{Выбор средств реализации и языка программирования}
+Для реализации алгоритмов был выбран язык программирования С++. Кроме стандартной библиотеки <iostream>, которая предоставляет возможность пользоваься срадствами ввода-вывода для стандартной консоли. Библиотека <algorithm> подключена для использования функции min(). Также для генерации различных слов от времени была взаимствована библиотека <ctime>.
+\par Функции, разработанные в ходе написания лабораторной работы. 
+\begin{enumerate}
+\item levenstein --- функция, которая нерекурсивно вычисляет расстояние двух слов, используя две строки по алгоритму Левенштейна.
+    \item DamerauLevenshteinDistance --- функция, которая нерекурсивно вычисляет расстояние двух строк, используя для этого матрицу по алгоритму Дамерау-Левенштейна.
+    \item damerauLevenshteinDistance --- функция, которая рекурсивно вычисляет расстояние двух слов по алгоритму Дамерау-Левенштейна с проверкой на кэш в матрице. 
+\end{enumerate}
+
+%\subsection{2222}
+В программе реализовано переключение между двумя режимами: пользовательским и автоматическим. Первый способ дает возможность человеку самому ввести необходимые слова и узнать их расстояние. Второй способ дает возможность отследить ресурсоёмкость каждого из трех алгоритмов.
+\par Далее предствлены листинги~\ref{lst:label1}, \ref{lst:label2}, \ref{lst:label3} реализаций трех алгоритмов.
+
+
+\begin{lstlisting}[caption={Расстояние Левенштейна нерекурсивный метод, используя две строки матрицы},label={lst:label1}]
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <ctime>
+
+using namespace std;
+
+string RandomWord(int length) {
+	static const char alphabet[] = "абвгдеёжзиклмнопрстуфхцчшщъыьэюя";
+	string result;
+
+	for (int i = 0; i < length; ++i) {
+		int randomIndex = rand() % (sizeof(alphabet) - 1);
+		result += alphabet[randomIndex];
+	}
+
+	return result;
+}
+
+int levenstein(string str_1, string str_2) {
+	int n = str_1.length();
+	int m = str_2.length();
+
+	vector<int> current_row(n + 1);
+	for (int i = 1; i <= n; i++) {
+		current_row[i] = i;
+	}
+
+	for (int i = 1; i <= m; i++) {
+		vector<int> previous_row = current_row;
+		current_row[0] = i;
+		for (int j = 1; j <= n; j++) {
+			current_row[j] = min(previous_row[j] + 1, min(current_row[j - 1] + 1, 
+				(str_1[j - 1] != str_2[i - 1]) ? previous_row[j - 1] + 1 : previous_row[j - 1]));
+		}
+	}
+	return current_row[n];
+}
+
+int main() {
+    setlocale(0, "");
+	string str1, str2;
+	srand(time(0));
+	int a, k, num;
+	double medtime = 0;
+	cout << "Ввести данные вручную (1) или сгенерировать (2) - ";
+	cin >> a;
+	if (a == 1) {
+		cout << "Введите первое слово: ";
+		cin >> str1;
+		cout << "Введите второе слово: ";
+		cin >> str2;
+		clock_t start_time = clock();
+		cout << "Расстояние левенштейна: " << levenstein(str1, str2) << endl;
+		clock_t end_time = clock();
+		double cpu_time = (double(end_time - start_time)) / CLOCKS_PER_SEC;
+		cout << "Процессорное время: " << cpu_time << endl;
+		cout << endl;
+	}
+	else {
+		cout << "Введите длину слова: ";
+		cin >> k;
+		cout << "Количество слов: ";
+		cin >> num;
+		for (int i = 1; i <= num; i++) {
+			cout << i << endl;
+			str1 = RandomWord(k);
+			str2 = RandomWord(k);
+			cout << str1 << endl << str2 << endl;
+			clock_t start_time = clock();
+			cout << "Расстояние левенштейна: " << levenstein(str1, str2) << endl;
+			clock_t end_time = clock();
+			double cpu_time = (double(end_time - start_time)) / CLOCKS_PER_SEC;
+			medtime += cpu_time;
+			cout << "Процессорное время: " << cpu_time << endl;
+			cout << endl;			
+		}
+		cout << "Среднее значение работы процессора: " << medtime / num;
+	}
+	return 0;
+}
+
+\end{lstlisting}
+
+%2. Расстояние Дамерау-Левенштейна нерекурсивным методом используя матрицу.
+\begin{lstlisting}[caption={Расстояние Дамерау-Левенштейна нерекурсивный метод, используя матрицу},label={lst:label2}]
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <vector>
+#include <ctime>
+
+using namespace std;
+
+string RandomWord(int length) {
+	static const char alphabet[] = "абвгдеёжзиклмнопрстуфхцчшщъыьэюя";
+	string result;
+
+	for (int i = 0; i < length; ++i) {
+		int randomIndex = rand() % (sizeof(alphabet) - 1);
+		result += alphabet[randomIndex];
+	}
+
+	return result;
+}
+
+int DamerauLevenshteinDistance(const string& source, const string& target) {
+
+	int n = source.length();
+	int m = target.length();
+	vector<vector<int>> distanceMatrix(n + 1, vector<int>(m + 1));
+
+	for (int i = 0; i <= n; ++i) {
+		distanceMatrix[i][0] = i;
+	}
+	for (int j = 0; j <= m; ++j) {
+		distanceMatrix[0][j] = j;
+	}
+
+	for (int i = 1; i <= n; ++i) {
+		for (int j = 1; j <= m; ++j) {
+
+			int substitutionCost = (source[i - 1] != target[j - 1]);
+
+			int deletionCost = distanceMatrix[i - 1][j] + 1;
+			int insertionCost = distanceMatrix[i][j - 1] + 1;
+			int substitutionOrEqualityCost = distanceMatrix[i - 1][j - 1] + substitutionCost;
+
+			//  транспозиция, если это возможно
+			if (i > 1 && j > 1 && source[i - 1] == target[j - 2] && source[i - 2] == target[j - 1]) {
+				distanceMatrix[i][j] = min({ deletionCost, insertionCost, substitutionOrEqualityCost, distanceMatrix[i - 2][j - 2] + substitutionCost });
+			}
+			else {
+				distanceMatrix[i][j] = min({ deletionCost, insertionCost, substitutionOrEqualityCost });
+			}
+		}
+	}
+
+	for (int i = 0; i <= source.length(); ++i) {
+		for (int j = 0; j <= target.length(); ++j) {
+			cout << distanceMatrix[i][j] << " ";
+		}
+		cout << endl;
+	}
+
+	return distanceMatrix[n][m];
+}
+
+int main() {
+	setlocale(0, "");
+	string str1, str2;
+	srand(time(0));
+	int a, k, num;
+	double medtime = 0;
+	cout << "Ввести данные вручную (1) или сгенерировать (2) - ";
+	cin >> a;
+	if (a == 1) {
+		cout << "Введите первое слово: ";
+		cin >> str1;
+		cout << "Введите второе слово: ";
+		cin >> str2;
+		clock_t start_time = clock();
+		cout << "Расстояние Дамерау-Левенштейна: " << DamerauLevenshteinDistance(str1, str2) << endl;
+		clock_t end_time = clock();
+		double cpu_time = (double(end_time - start_time)) / CLOCKS_PER_SEC;
+		cout << "Процессорное время: " << cpu_time << endl;
+		cout << endl;
+	}
+	else {
+		cout << "Введите длину слова: ";
+		cin >> k;
+		cout << "Количество слов: ";
+		cin >> num;
+		for (int i = 1; i <= num; i++) {
+			cout << i << endl;
+			str1 = RandomWord(k);
+			str2 = RandomWord(k);
+			cout << str1 << endl << str2 << endl;
+			clock_t start_time = clock();
+			cout << "Расстояние Дамерау-Левенштейна: " << DamerauLevenshteinDistance(str1, str2) << endl;
+			clock_t end_time = clock();
+			double cpu_time = (double(end_time - start_time)) / CLOCKS_PER_SEC;
+			medtime += cpu_time;
+			cout << "Процессорное время: " << cpu_time << endl;
+			cout << endl;		
+		}
+		cout << "Среднее значение работы процессора: " << medtime / num;
+	}
+	return 0;
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Расстояние Дамерау-Левенштейна рекурсивный метод, используя три строки матрицы},label={lst:label3}]
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <ctime>
+
+using namespace std;
+
+string RandomWord(int length) {
+	static const char alphabet[] = "абвгдеёжзиклмнопрстуфхцчшщъыьэюя";
+	string result;
+
+	for (int i = 0; i < length; ++i) {
+		int randomIndex = rand() % (sizeof(alphabet) - 1);
+		result += alphabet[randomIndex];
+	}
+
+	return result;
+}
+
+int damerauLevenshteinDistance(const string& str1, const string& str2, int i, int j, vector<vector<int>>& memo) {
+	if (i == 0)
+		return j;
+
+	if (j == 0)
+		return i;
+
+	if (memo[i][j] != -1)
+		return memo[i][j];
+
+	int cost = (str1[i - 1] == str2[j - 1]) ? 0 : 1;
+
+	int deletee = damerauLevenshteinDistance(str1, str2, i - 1, j, memo) + 1;
+	int insert = damerauLevenshteinDistance(str1, str2, i, j - 1, memo) + 1;
+	int substitution = damerauLevenshteinDistance(str1, str2, i - 1, j - 1, memo) + cost;
+
+	int distance = min({ deletee, insert, substitution });
+
+	if (i > 1 && j > 1 && str1[i - 1] == str2[j - 2] && str1[i - 2] == str2[j - 1]) {
+		int transposition = damerauLevenshteinDistance(str1, str2, i - 2, j - 2, memo) + cost;
+		distance = min(distance, transposition);
+	}
+
+	memo[i][j] = distance;
+	return distance;
+}
+
+int damerauLevenshteinDistance(const string& str1, const string& str2) {
+	int m = str1.length();
+	int n = str2.length();
+
+	vector<vector<int>> memo(m + 1, vector<int>(n + 1, -1));
+
+	return damerauLevenshteinDistance(str1, str2, m, n, memo);
+}
+
+int main() {
+	setlocale(0, "");
+	string str1, str2;
+	srand(time(0));
+	int a, k, num;
+	double medtime = 0;
+	cout << "Ввести данные вручную (1) или сгенерировать (2) - ";
+	cin >> a;
+	if (a == 1) {
+		cout << "Введите первое слово: ";
+		cin >> str1;
+		cout << "Введите второе слово: ";
+		cin >> str2;
+		clock_t start_time = clock();
+		cout << "Расстояние Дамерау-Левенштейна: " << damerauLevenshteinDistance(str1, str2) << endl;
+		clock_t end_time = clock();
+		double cpu_time = (double(end_time - start_time)) / CLOCKS_PER_SEC;
+		cout << "Процессорное время: " << cpu_time << endl;
+		cout << endl;
+	}
+	else {
+		cout << "Введите длину слова: ";
+		cin >> k;
+		cout << "Количество слов: ";
+		cin >> num;
+		for (int i = 1; i <= num; i++) {
+			cout << i << endl;
+			str1 = RandomWord(k);
+			str2 = RandomWord(k);
+			cout << str1 << endl << str2 << endl;
+			clock_t start_time = clock();
+			cout << "Расстояние Дамерау-Левенштейна: " << damerauLevenshteinDistance(str1, str2) << endl;
+			clock_t end_time = clock();
+			double cpu_time = (double(end_time - start_time)) / CLOCKS_PER_SEC;
+			medtime += cpu_time;
+			cout << "Процессорное время: " << cpu_time << endl;
+			cout << endl;
+		}
+		cout << "Среднее значение работы процессора: " << medtime / num;
+	}
+
+
+
+	return 0;
+}
+\end{lstlisting}
+
+\newpage
+\begin{center}
+    \section{Исследовательская часть}
+\end{center}
+\justifying
+
+В таблице \ref{tab:my_label} приведено время в секундах, потраченное на вычисление расстояния определённым алгоритмом:
+\begin{table}[h]
+\begin{center}
+    \centering
+    \begin{tabular}{ | m{6em} | m{2cm}| m{2cm} | m{2cm} | m{2cm} | m{2cm} |} 
+  \hline
+ Алгоритм & 5 символов & 10 символов & 15 символов & 20 символов & 50 символов\\ 
+  \hline
+  Левенштейн без рекурсии 2 строки & 0.002 & 0.0026 & 0.0028 & 0.004 & 0.0097\\ 
+  \hline
+  Дамерау-Левенштейн без рекурсии матрица & 0.012 & 0.029 & 0.063 & 0.116 & 0.6396\\ 
+  \hline
+  Дамерау-Левенштейн рекурсия с кэшем & 0.002 & 0.003 & 0.004 & 0.0058 & 0.0252 \\
+  \hline
+\end{tabular}
+\caption{\label{tab:my_label}}
+\end{center}
+\end{table}
+
+Результаты вычислений также представленны на графике (рисунок ~\ref{img:grap1}): 
+\begin{figure}[h!]
+    \center{\includegraphics{graph}}
+    \caption{График зависимости затраченного времени}
+    \label{img:grap1}
+\end{figure}
+
+\justifying
+Нетрудно заметить, что затраченное время возрастсает с увеличением количества вычислений. Поскольку при заполнении матрицы требуется сделать $3^{n \cdot n}$ вычислений, где n - количество символов в слове, то необходимо расходовать большое количество времени. Что касается алгоритма Дамерау-Левенштейна с рекурсией с кэшем, то затраченного времени и расходованной памяти, безусловно, становится гораздо меньше. Однако при больших объемах информации лидирует алгоритм Левенштейна без рекурсии с помощью двух строк. Данный алгоритм универсален, так как хранит в разы меньше информации по сравнению с другими алгоритмами и тратит на вычисления меньше времени. Он будет являться самым ``выигрышным''.
+
+\newpage
+\begin{center}
+    \section*{Заключение}
+    \addcontentsline{toc}{section}{Заключение}
+\end{center}
+
+%В результате выполнения лабораторной работы были реализованы такие алгоритмы, как расстояние Левенштейна без рекурсии в две строки, расстояние Дамерау-Левенштейна без рекурсии, используя матрицу, расстояние Дамерау-Левенштейна с рекурсией с кэшем. Для удобства нахождения эффективного алгоритма был создан автоматический генератор слов разной длины. После обработки полученных данных наиболее эфективным алгоритмом оказался Левенштейна без рекурсии в две строки. Он меньше всего затрачивает память компьютера, что делает его максимально эффективным по сравнению с другими алгоритмами.
+В результате выполнения лабораторной работы:
+\begin{enumerate}
+\item Описано расстояние Левенштейна и Дамерау-Левенштейна.
+\item Разработаны алгоритмы вычисления редакционных расстояний, согласно варианту.
+\item Реализованы разработанные алгоритмы.
+\item Выполнено тестирование реализации разработанных алгоритмов.
+\item Разработано программное обеспечение с двумя режимами работы --- режимом расчёта расстояний для введённых пользователем двух строк произвольной длины и режимом массированного замера процессорного времени для автоматически сгенерированных строк заданной длины.
+\item Проведено сравнение временной эффективности реализации разработанных алгоритмов.
+\item Выполнена оценка емкостной эффективности разработанных алгоритмов в зависимости от линейных размеров строк.
+\end{enumerate}
+
+Согласно варианту, разработанно следующие три алгоритма.
+\begin{enumerate}
+\item Алгоритм вычисления расстояния Левенштейна нерекурсивным методом, используя две строки.
+\item Алгоритм вычисления расстояния Дамерау-Левенштейна нерекурсивным методом, пользуясь матрицей и в конце программы вывести её содержимое.
+\item Алгоритм вычисления расстояния Дамерау-Левенштейна рекурсивным методом без кэша.
+\end{enumerate}
+После обработки полученных данных наиболее эфективным алгоритмом оказался Левенштейна без рекурсии в две строки. Он меньше всего затрачивает память компьютера, что делает его максимально эффективным по сравнению с другими алгоритмами.
+
+\newpage
+\begin{center}
+\begin{thebibliography}{}
+\addcontentsline{toc}{section}{Список литературы}
+\bibitem{mpl} Левенштейн В. И. Двоичные коды с исправлением выпадений, вставок
+и замещений символов / Доклады АН СССР, т. 163. — М.: Издательство «Наука», 1965.
+\end{thebibliography}
+\end{center}
+\end{document}

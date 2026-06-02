@@ -1,0 +1,29 @@
+.DS_Store
+Thumbs.db
+
+# C++
+*.exe
+*.out
+*.o
+*.obj
+
+# Visual Studio
+.vs/
+Debug/
+Release/
+x64/
+*.vcxproj.user
+
+# LaTeX auxiliary files
+*.aux
+*.log
+*.toc
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# Archives
+*.zip
+*.rar
+*.7z

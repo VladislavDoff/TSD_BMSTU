@@ -1,0 +1,394 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage{indentfirst, setspace}
+\usepackage{tabularx, multirow}
+\usepackage[normalem]{ulem}
+\usepackage[style=russian]{csquotes}
+\usepackage[english,russian]{babel}
+\usepackage{hyperref}
+\usepackage{ragged2e}
+\usepackage{caption}
+\usepackage{wrapfig}
+\usepackage{amsmath}
+\usepackage{tikz}
+\makeatletter
+\def\@biblabel#1{#1. }
+\makeatother
+\captionsetup{labelsep=endash}
+\usepackage{listings}
+\linespread{1.3}
+\lstset{
+  language=C++, % Язык программирования (можно выбрать другой)
+  basicstyle=\ttfamily\small, % Основной стиль шрифта
+  keywordstyle=\color{blue}, % Стиль ключевых слов
+  breaklines=true,
+  commentstyle=\color{green}, % Стиль комментариев
+  stringstyle=\color{red}, % Стиль строк
+  extendedchars=\true,
+  showstringspaces=false,
+}
+\usepackage[left=20mm, top=15mm, right=15mm, bottom=20mm]{geometry}
+
+\begin{document}
+\begin{titlepage}
+     \fontsize{12}{12}\selectfont
+
+  {\centering
+
+   \begin{bf}
+
+    \begin{wrapfigure}{l}{19mm}
+        \includegraphics[width=22mm]{emblem.jpeg}
+    \end{wrapfigure}
+
+
+    \noindent Министерство науки и высшего образования Российской Федерации
+
+    \noindent Федеральное государственное бюджетное образовательное учреждение высшего образования
+
+    \noindent \enquote{Московский государственный технический унверситет
+
+     \noindent имени Н.Э. Баумана
+
+     \noindent (национальный исследовательский университет)}
+
+    \noindent (МГТУ им. Н.Э. Баумана)
+
+   \end{bf}
+  }
+
+  \vspace{0.4cm}
+
+  {\setstretch{0.1}
+   \noindent\rule{\textwidth}{1mm}
+   \noindent\rule{\textwidth}{0.5mm}
+
+  }
+
+  \fontsize{14}{21}\selectfont
+
+  \noindent\begin{tabularx}{\textwidth}{l >{\centering\arraybackslash}X}
+   ФАКУЛЬТЕТ & \flqq Фундаментальные Науки\frqq \\ \cline{2-2}
+
+   КАФЕДРА & ФН-12 \flqq Математическое моделирование\frqq \\ \cline{2-2}
+  \end{tabularx}
+
+
+  \vspace{1cm}
+
+
+  \begin{center}
+   \begin{bf}
+
+    \fontsize{24}{36}\selectfont
+    ОТЧЕТ
+
+    \fontsize{20}{30}\selectfont
+    ПО ЛАБОРАТОРНОЙ РАБОТЕ НА ТЕМУ:
+
+    Обход графовых структур
+
+   \end{bf}
+  \end{center}
+
+  \fontsize{14}{21}\selectfont
+  \vspace{5cm}
+
+
+  \noindent\begin{tabularx}{\textwidth}{ X >{\centering}p{4cm} p{1cm} c }
+   Студент: & & & Подобедов В. В. \\ \cline{2-2} \cline{4-4}
+   & \fontsize{10}{15}\selectfont дата, подпись & & \fontsize{10}{15}\selectfont Ф.И.О. \\
+   Преподаватель: & & & Волкова Л. Л.\\ \cline{2-2} \cline{4-4}
+   & \fontsize{10}{15}\selectfont дата, подпись & & \fontsize{10}{15}\selectfont Ф.И.О.
+  \end{tabularx}
+
+  \vspace{\fill}
+
+  \begin{center}
+   \it{Москва}, 2023
+  \end{center}
+
+  \thispagestyle{empty}
+\end{titlepage}
+
+\renewcommand{\contentsname}{Содержание}
+\setcounter{page}{2}
+\tableofcontents
+
+\newpage
+\begin{center}
+   \section*{Введение} 
+\addcontentsline{toc}{section}{Введение}
+\end{center}
+\justifying
+\textbf{Цель лабораторной работы}: реализовать алгоритмы обхода графовых структур.
+
+Для достижения поставленной цели требуется решить следующие \textbf{задачи}.
+\begin{enumerate}
+\item Описать граф и бинарное дерево.
+\item Реализовать графовую структуру.
+\item Реализовать возможность пользователю самостоятельно заполнять графовую структуру.
+\item Реализовать обход графовой структуры в ширину и в глубину.
+\item Выполнить тестирование реализации разработанного алгоритма.
+\end{enumerate}
+
+Согласно варианту, требуется разработать бинарное дерево.
+
+\newpage
+\begin{center}
+   \section{Аналитическая часть} 
+\end{center}
+
+\textbf{Граф} --- это математическая абстракция, представляющая собой набор вершин и рёбер между этими вершинами.
+
+\textbf{Граф с петлями} --- это граф, в котором рёбра могут соединять вершины сами с собой, создавая так называемые "петли". Петля представляет собой ребро, начало и конец которого находятся в одной и той же вершине.
+
+\textbf{Граф без петель} --- это граф, в котором отсутствуют рёбра, соединяющие вершину с самой собой.
+
+\textbf{Бинарное дерево} --- это иерархическая структура данных в виде дерева, в которой каждый узел может иметь не более двух дочерних узлов: левый и правый. У дерева есть две главные характеристики:
+\begin{enumerate}
+    \item Корень --- верхний узел дерева, от которого начинаются все другие узлы. У бинарного дерева может быть только один корень.
+    \item Листья --- узлы без дочерних узлов называются листьями. Листья находятся на самом нижнем уровне дерева.
+\end{enumerate}
+
+\newpage
+\begin{center}
+    \section{Конструкторская часть}
+\end{center}
+\subsection{Обход бинарного дерева в ширину}
+Обход бинарного дерева в ширину происходит по уровням дерева: сначала посещаются все узлы на одном уровне, затем переходят к узлам следующего уровня. Для этого используется структура данных очередь (queue), которая помогает сохранять порядок обработки узлов.
+
+Алгоритм обхода бинарного дерева в ширину:
+\begin{enumerate}
+    \item Начать с корневого узла дерева и поместить его в очередь.
+    \item Пока очередь не пуста:
+    \begin{itemize}
+        \item[---] Извлечь узел из начала очереди.
+        \item[---] Посетить этот узел и напечатать его значение.
+        \item[---] Если у узла есть левый потомок, поместить его в конец очереди.
+        \item[---] Если у узла есть правый потомок, поместить его в конец очереди.
+    \end{itemize}
+    \item Повторить шаг 2, пока очередь не опустеет.
+\end{enumerate}
+
+\subsection{Обход бинарного дерева в глубину}
+Обход бинарного дерева в глубину начинается с корневого узла и идет вглубь структуры дерева, прежде чем вернуться обрабатывать более поздние узлы. Для этого используется структура данных стек (stack), которая помогает сохранять порядок обработки узлов.
+
+Алгоритм обхода бинарного дерева в ширину:
+\begin{enumerate}
+    \item Начать с корневого узла дерева и поместить его в стек.
+    \item Пока стек не пуст:
+    \begin{itemize}
+        \item[---] Извлечь узел из начала стека.
+        \item[---] Посетить этот узел и напечатать его значение.
+        \item[---] Если у узла есть правый потомок, поместить его в конец стека.
+        \item[---] Если у узла есть левый потомок, поместить его в конец стека.
+    \end{itemize}
+    \item Повторить шаг 2, пока стек не опустеет.
+\end{enumerate}
+
+\subsection{Написание бинарного дерева}
+С помощью шаблонных классов ``BinaryTree'', который описывает саму структуру бинарного дерева, и ``BinaryTreeNode'', который описывает узел бинарного дерева, реализовать бинарное дерево на ссылках. При этом нужно учесть, что левый или правый потомок могут отсутствовать.  Требуется разработать следующие методы.
+\begin{itemize}
+    \item[---] Рекурсивный метод ``addElement'' --- метод, который добавляет элемент в бинарное дерево.
+    \item[---] Рекурсивный метод ``BreadthTree'' --- метод обхода бинарного дерева в ширину.
+    \item[---] Рекурсивный метод ``DepthTree'' --- метод обхода бинарного дерева в глубину.
+    \item[---] Метод ``addElementToTree'' --- метод, который обрабатывает введённый пользователем элемент и вызывает рекурсивный метод ``addElement''.
+    \item[---] Метод ``printBreadthTree'' --- метод, который выводит в консоль результат обхода дерева в ширину.
+    \item[---] Метод ``printDepthTree'' --- метод, который выводит в консоль результат обхода дерева в глубину.
+\end{itemize}
+
+К программе предъявлены следующие требования. Пользователь самостоятельно вводит данные в бинарное дерево, после чего выводится результат обхода в ширину и глубину пользовательского дерева.
+
+\newpage
+\begin{center}
+    \section{Технологическая часть}
+\end{center}
+
+Лабораторная работа была реализована на языке программирования C++. Кроме стандартной библиотеки <iostream>, которая предоставляет возможность пользоваься средствами ввода-вывода для стандартной консоли, были подключены библиотеки <queue> и <stack>. Они представляют собой контейнеры, реализующие структуры данных ``стек'' и ``очередь'' соответственно, предоставляя удобные интерфейсы для хранения и управления данными в виде стека или очереди. Также была подключена библиотека <string> для пользования строками. Был также написан стек на ссылках.
+
+Далее приведен листинг реализации стека (листинг~\ref{lst:label1}).
+\begin{lstlisting}[caption={Исходный код программы для реализации стека},label={lst:label1}]
+#include <iostream>
+#include <string>
+#include <queue>
+#include <stack>
+
+using namespace std;
+
+template <typename T>
+class BinaryTreeNode {
+public:
+	T data;
+	BinaryTreeNode<T>* left;
+	BinaryTreeNode<T>* right;
+
+	BinaryTreeNode(T value) : data(value), left(nullptr), right(nullptr) {}
+};
+
+template <typename T>
+class BinaryTree {
+private:
+	BinaryTreeNode<T>* root;
+
+	void addElement(BinaryTreeNode<T>* node) {
+		string choice;
+
+		cout << "Добавить значение в левый узел для узла " << node->data << "? (yes/no): ";
+		cin >> choice;
+
+		if (choice == "yes") {
+			T value;
+			cout << "Введите значение для левого узла: ";
+			cin >> value;
+			node->left = new BinaryTreeNode<T>(value);
+			addElement(node->left);
+		}
+		else if (choice == "no") {
+			node->left = nullptr;
+		}
+
+		cout << "Добавить значение в правый узел для узла " << node->data << "? (yes/no): ";
+		cin >> choice;
+
+		if (choice == "yes") {
+			T value;
+			cout << "Введите значение для правого узла: ";
+			cin >> value;
+			node->right = new BinaryTreeNode<T>(value);
+			addElement(node->right);
+		}
+		else if (choice == "no") {
+			node->right = nullptr;
+		}
+	}
+
+	void BreadthTree(BinaryTreeNode<T>* node) {
+		if (node == nullptr) {
+			return;
+		}
+
+		queue<BinaryTreeNode<T>*> nodesQueue;
+		nodesQueue.push(node);
+
+		while (!nodesQueue.empty()) {
+			BinaryTreeNode<T>* current = nodesQueue.front();
+			nodesQueue.pop();
+			cout << current->data << " ";
+
+			if (current->left != nullptr) {
+				nodesQueue.push(current->left);
+			}
+			if (current->right != nullptr) {
+				nodesQueue.push(current->right);
+			}
+		}
+	}
+
+	void DepthTree(BinaryTreeNode<T>* node) {
+		if (node == nullptr) {
+			return;
+		}
+
+		stack<BinaryTreeNode<T>*> nodesStack;
+		nodesStack.push(node);
+
+		while (!nodesStack.empty()) {
+			BinaryTreeNode<T>* current = nodesStack.top();
+			nodesStack.pop();
+			std::cout << current->data << " ";
+
+			if (current->right != nullptr) {
+				nodesStack.push(current->right);
+			}
+			if (current->left != nullptr) {
+				nodesStack.push(current->left);
+			}
+		}
+	}
+
+public:
+	BinaryTree() : root(nullptr) {}
+
+	void addElementToTree() {
+		T value;
+		cout << "Введите значение для корня дерева: ";
+		cin >> value;
+		root = new BinaryTreeNode<T>(value);
+		addElement(root);
+	}
+
+	void printBreadthTree() {
+		cout << "Обход дерева в ширину: ";
+		BreadthTree(root);
+		cout << endl;
+	}
+
+	void printDepthFirstTree() {
+		cout << "Обход дерева в глубину: ";
+		DepthTree(root);
+		cout << endl;
+	}
+};
+
+int main() {
+	setlocale(0, "");
+	BinaryTree<int> binaryTree;
+	binaryTree.addElementToTree();
+	cout << endl;
+	binaryTree.printBreadthTree();
+	cout << endl;
+	binaryTree.printDepthFirstTree();
+	return 0;
+}
+\end{lstlisting}
+
+\newpage
+\begin{center}
+    \section{Исследовательская часть}
+\end{center}
+
+Далее на рисунках представлен результат работы программы и входной файл с инфиксным выражением.
+
+Результат работы программы, где пользователь вводит бинарное дерево, и программа выводит обход пользовательского дерева в ширину и глубину. Результат приведён на рис.~\ref{img:grap1}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test1.PNG}}
+    \caption{Пример №1}
+    \label{img:grap1}
+\end{figure}
+
+\newpage
+Результат работы программы, где пользователь вводит бинарное дерево, состоящее только из левых потомков, и программа выводит обход пользовательского дерева в ширину и глубину. Результат приведён на рис.~\ref{img:grap2}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test2.PNG}}
+    \caption{Пример №2}
+    \label{img:grap2}
+\end{figure}
+
+\newpage
+\begin{center}
+    \section*{Заключение}
+    \addcontentsline{toc}{section}{Заключение}
+\end{center}
+
+Цель лабораторной работы достигнута: реализован алгоритмы обхода бинарного дерева.
+
+В результате выполнения лабораторной работы были выполнены все задачи.
+\begin{enumerate}
+\item Описано бинарное дерево.
+\item Программно реализовано бинарное дерево.
+\item Реализована возможность пользователю самостоятельно заполнять бинарное дерево.
+\item Реализован обход бинарного дерева в ширину и в глубину.
+\item Выполнено тестирование реализации разработанного алгоритма.
+\end{enumerate}
+
+\newpage
+\begin{center}
+\begin{thebibliography}{}
+\addcontentsline{toc}{section}{Список используемых источников}
+\bibitem{book} Рафгарден Тим. Совершенный алгоритм. Графовые алгоритмы и структуры данных. --- СПб.: Питер, 2019. --- 256 с.: ил. --- (Серия ``Библиотека программиста'').
+\end{thebibliography}
+\end{center}
+
+\end{document}

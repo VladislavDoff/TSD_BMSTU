@@ -1,0 +1,622 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage{indentfirst, setspace}
+\usepackage{tabularx, multirow}
+\usepackage[normalem]{ulem}
+\usepackage[style=russian]{csquotes}
+\usepackage[english,russian]{babel}
+\usepackage{hyperref}
+\usepackage{ragged2e}
+\usepackage{caption}
+\usepackage{wrapfig}
+\usepackage{amsmath}
+\usepackage{tikz}
+\makeatletter
+\def\@biblabel#1{#1. }
+\makeatother
+\captionsetup{labelsep=endash}
+\usepackage{listings}
+\linespread{1.3}
+\lstset{
+  language=C++, % Язык программирования (можно выбрать другой)
+  basicstyle=\ttfamily\small, % Основной стиль шрифта
+  keywordstyle=\color{blue}, % Стиль ключевых слов
+  breaklines=true,
+  commentstyle=\color{green}, % Стиль комментариев
+  stringstyle=\color{red}, % Стиль строк
+  extendedchars=\true,
+  showstringspaces=false,
+}
+\usepackage[left=20mm, top=15mm, right=15mm, bottom=20mm]{geometry}
+
+\begin{document}
+\begin{titlepage}
+     \fontsize{12}{12}\selectfont
+
+  {\centering
+
+   \begin{bf}
+
+    \begin{wrapfigure}{l}{19mm}
+        \includegraphics[width=22mm]{emblem.jpeg}
+    \end{wrapfigure}
+
+
+    \noindent Министерство науки и высшего образования Российской Федерации
+
+    \noindent Федеральное государственное бюджетное образовательное учреждение высшего образования
+
+    \noindent \enquote{Московский государственный технический унверситет
+
+     \noindent имени Н.Э. Баумана
+
+     \noindent (национальный исследовательский университет)}
+
+    \noindent (МГТУ им. Н.Э. Баумана)
+
+   \end{bf}
+  }
+
+  \vspace{0.4cm}
+
+  {\setstretch{0.1}
+   \noindent\rule{\textwidth}{1mm}
+   \noindent\rule{\textwidth}{0.5mm}
+
+  }
+
+  \fontsize{14}{21}\selectfont
+
+  \noindent\begin{tabularx}{\textwidth}{l >{\centering\arraybackslash}X}
+   ФАКУЛЬТЕТ & \flqq Фундаментальные Науки\frqq \\ \cline{2-2}
+
+   КАФЕДРА & ФН-12 \flqq Математическое моделирование\frqq \\ \cline{2-2}
+  \end{tabularx}
+
+
+  \vspace{1cm}
+
+
+  \begin{center}
+   \begin{bf}
+
+    \fontsize{24}{36}\selectfont
+    ОТЧЕТ
+
+    \fontsize{20}{30}\selectfont
+    ПО ЛАБОРАТОРНОЙ РАБОТЕ НА ТЕМУ:
+
+    Перемножение матриц
+
+   \end{bf}
+  \end{center}
+
+  \fontsize{14}{21}\selectfont
+  \vspace{5cm}
+
+
+  \noindent\begin{tabularx}{\textwidth}{ X >{\centering}p{4cm} p{1cm} c }
+   Студент: & & & Подобедов В. В. \\ \cline{2-2} \cline{4-4}
+   & \fontsize{10}{15}\selectfont дата, подпись & & \fontsize{10}{15}\selectfont Ф.И.О. \\
+   Преподаватель: & & & Волкова Л. Л.\\ \cline{2-2} \cline{4-4}
+   & \fontsize{10}{15}\selectfont дата, подпись & & \fontsize{10}{15}\selectfont Ф.И.О.
+  \end{tabularx}
+
+  \vspace{\fill}
+
+  \begin{center}
+   \it{Москва}, 2023
+  \end{center}
+
+  \thispagestyle{empty}
+\end{titlepage}
+
+\renewcommand{\contentsname}{Содержание}
+\setcounter{page}{2}
+\tableofcontents
+
+\newpage
+\begin{center}
+   \section*{Введение} 
+\addcontentsline{toc}{section}{Введение}
+\end{center}
+\justifying
+\textbf{Цель лабораторной работы}: провести сравнительный анализ алгоритмов умножения матриц.
+
+Для достижения поставленной цели требуется решить следующие \textbf{задачи}.
+\begin{enumerate}
+\item Описать три алгоритма умножения матриц --- классический, Винограда и Штрассена.
+\item Реализовать разработанные алгоритмы.
+\item Выполнить тестирование реализации разработанных алгоритмов.
+\item Дать оценку сложности алгоритмов.
+\item Оценить эффективность каждого алгоритма (по памяти и времени).
+\end{enumerate}
+
+\newpage
+\begin{center}
+   \section{Аналитическая часть} 
+\end{center}
+
+\textbf{Матрица} --- математический объект, записываемый в виде прямоугольной таблицы, который представляет собой совокупность строк и столбцов, на пересечении которых находятся его элементы. Количество строк и столбцов задает размер матрицы.
+
+\textbf{Классический алгоритм умножения матриц} --- это стандартный метод перемножения матриц в линейной алгебре. Если есть две матрицы $A$ размером $m \times n$ и $B$ размером $n \times p$, то произведение матриц $C = AB$ будет матрицей размером $m \times p$. Каждый элемент $C[i][j]$ матрицы C вычисляется путем умножения элементов соответствующей строки матрицы $A$ на соответствующие элементы столбца матрицы $B$ и последующим сложением результатов. 
+
+\textbf{Алгоритм Винограда для умножения матриц}~\cite{book} --- это метод, где предварительно вычисляются некоторые значения и используются для уменьшения количества умножений в основном цикле умножения матриц. Этот метод полезен для больших матриц, где вычислительные затраты могут быть значительными. 
+
+\textbf{Алгоритм Штрассена для умножения матриц}~\cite{book} --- это метод умножения матриц, который уменьшает количество операций умножения стандартным способом. Он основан на разделении матриц на подматрицы меньшего размера, что позволяет снизить сложность умножения. Основная идея алгоритма заключается в том, что вместо классического умножения матриц $A$ и $B$ размерности $n \times n$ можно разбить каждую из них на четыре подматрицы размера $\frac{n}{2} \times \frac{n}{2}$, что дает $8$ уравнений для вычисления произведения. Однако алгоритм Штрассена использует не все эти уравнения, а только $7$, чтобы сократить количество операций умножения.
+
+\newpage
+\begin{center}
+    \section{Конструкторская часть}
+\end{center}
+\subsection{Умножение матриц классическим способом}
+Формула для вычисления элемента $C[i][j]$ выглядит следующим образом~(\ref{eq:classic}):
+\begin{equation} \label{eq:classic}
+C_{ij} = \sum_{k=1}^{n} A_{ik} \cdot B_{kj}
+\end{equation}
+
+Нетрудно понять, что в данной формуле $i$ --- номер строки, $j$ --- номер столбца, $k$ --- индекс суммирования, $C$ --- резульирующая матрица, $A$ --- первая матрица, $B$ --- вторая матрица. Это означает, что каждый элемент $C[i, j]$ матрицы C равен сумме произведений соответствующих элементов строки $i$ матрицы $A$ и столбца $j$ матрицы $B$. Процесс вычисления всех элементов матрицы $C$ повторяется для каждой пары $(i, j)$ в пределах размерности матрицы C.
+
+\subsection{Метод Винограда}
+Алгоритм Винограда включает следующие шаги.
+\begin{enumerate}
+    \item Создать новую матрицу $C$ размерностью $m \times n$ и заполните ее нулями.
+    \item Создать вспомогательные массивы $row\_factor$ и $col\_factor$ для оптимизации вычислений. Их размерность равна числу строк матрицы $A$ и числу столбцов матрицы $B$ соответственно.
+    \item Вычислить $row\_factor[i]$ как сумму произведений пар элементов из $A[i]$, умноженных на соответствующие элементы из $A[i]$.
+    \item Вычислите $col\_factor[j]$ как сумму произведений пар элементов из $B[j]$, умноженных на соответствующие элементы из $B[j]$.
+    \item Используя предварительно вычисленные $row\_factor$ и $col\_factor$, вычислите каждый элемент матрицы $C$ следующим образом: 
+    \[ C[i][j] = rc\_f + \sum_{k=0}^{k-1} (A[i][k] + B[k][j]) \cdot (A[i][k+1] + B[k+1][j]) \text{, где}\]  \[ rc\_f = -row\_factor[i] - col\_factor[j] \] 
+    \item Если размерность матрицы нечетна, нужно добавить к соответствующему элементу $C$ произведение соответствующих элементов из $A$ и $B$, которые не участвовали в основных вычислениях.
+\end{enumerate}
+
+\subsection{Метод Штрассена}
+Шаги алгоритма Штрассена, следующие.
+\begin{enumerate}
+    \item Каждая изматриц $A$ и $B$ разбивается на четыре части размера $\frac{n}{2} \times \frac{n}{2}$. Таким образом получаются такие матрицы: 
+    $\begin{pmatrix}
+      A_{11} & A_{12}\\
+      A_{21} & A_{22}
+    \end{pmatrix}$
+    и 
+    $\begin{pmatrix}
+      B_{11} & B_{12}\\
+      B_{21} & B_{22}
+    \end{pmatrix}$
+    \item Вычисляются промежуточные матрицы от $M_1$ до $M_7$ по формулам:
+    \begin{align*}
+      M_1 &= (A_{11} + A_{22}) \cdot (B_{11} + B_{22}) \\
+      M_2 &= (A_{21} + A_{22}) \cdot B_{11} \\
+      M_3 &= A_{11} \cdot (B_{12} - B_{22}) \\
+      M_4 &= A_{22} \cdot (B_{21} - B_{11}) \\
+      M_5 &= (A_{11} + A_{12}) \cdot B_{22} \\
+      M_6 &= (A_{21} - A_{11}) \cdot (B_{11} + B_{12}) \\ 
+      M_7 &= (A_{12} - A_{22}) \cdot (B_{21} + B_{22})
+    \end{align*}
+    \item Используя промежуточные матрицы $M_1$ до $M_7$, вычисляются четыре части результирующей матрицы $C$:
+    \begin{align*}
+      C_{11} &= M_1 + M_4 - M_5 + M_7 \\
+      C_{12} &= M_3 + M_5 \\
+      C_{21} &= M_2 + M_4 \\
+      C_{22} &= M_1 - M_2 + M_3 + M_6
+    \end{align*}
+    \item Полученные части результирующей матрицы $C_{11}$, $C_{12}$, $C_{21}$, $C_{22}$ объединяются в единую матрицу $C$.
+\end{enumerate}
+
+\subsection{Функции программы}
+Требуется разработать следующие функции.
+\begin{itemize}
+    \item[---] Функция ``matrixAddition'' --- функция, которая складывает марицы.
+    \item[---] Функция ``matrixSubtraction'' --- функция, которая перемножает две матрицы.
+    \item[---] Функция ``strassenMatrixMultiply'' --- функция для умножения матриц методом Штрассена.
+    \item[---] Функция ``classicMatrixMultiply'' --- функция для умножения матриц классическим способом.
+    \item[---] Функция ``matrixMultiplyVinograd'' ---  Функция для умножения матриц с использованием алгоритма Винограда.
+    \item[---] Функция ``printMatrix'' --- функция для вывода матрицы.
+\end{itemize}
+
+К программе предъявлены следующие требования. В начале выполнения работы программы пользователь выбирает каким методом будут перемножены матрицы. Далее с помощью выбранного алгоритма вычисляется произведение матриц и на экран консоли выводится результирующая матрица.
+
+\newpage
+\begin{center}
+    \section{Технологическая часть}
+\end{center}
+
+Лабораторная работа была реализована на языке программирования C++. Кроме стандартной библиотеки <iostream>, которая предоставляет возможность пользоваься средствами ввода-вывода для стандартной консоли, была подключена библиотека <vector>. Она включает в себя шаблон класса для контейнеров последовательности. Вектор хранит элементы заданного типа в линейном расположении и обеспечивает быстрый случайный доступ к любому элементу. Также для вычисления работы программы была взаимствована библиотека <ctime>.
+
+Далее приведен листинг реализации трех алгоритмов (листинг~\ref{lst:label1}).
+\begin{lstlisting}[caption={Исходный код программы для нахождения произведения матриц разными методами},label={lst:label1}]
+#include <iostream>
+#include <vector>
+#include <ctime>
+
+using namespace std;
+
+// Функция для сложения матриц
+vector<vector<int>> matrixAddition(const vector<vector<int>>& A, const vector<vector<int>>& B) {
+	int n = A.size();
+	vector<vector<int>> result(n, vector<int>(n, 0));
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			result[i][j] = A[i][j] + B[i][j];
+		}
+	}
+
+	return result;
+}
+
+// Функция для вычитания матриц
+vector<vector<int>> matrixSubtraction(const vector<vector<int>>& A, const vector<vector<int>>& B) {
+	int n = A.size();
+	vector<vector<int>> result(n, vector<int>(n, 0));
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			result[i][j] = A[i][j] - B[i][j];
+		}
+	}
+
+	return result;
+}
+
+// Функция для умножения матриц методом Штрассена
+vector<vector<int>> strassenMatrixMultiply(const vector<vector<int>>& A, const vector<vector<int>>& B) {
+	int n = A.size();
+
+	if (n <= 2) {
+		vector<vector<int>> result(n, vector<int>(n, 0));
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				for (int k = 0; k < n; k++) {
+					result[i][j] += A[i][k] * B[k][j];
+				}
+			}
+		}
+
+		return result;
+	}
+
+	int newSize = n;
+	if (n % 2 != 0) {
+		newSize++;
+	}
+
+	vector<vector<int>> newA(newSize, vector<int>(newSize, 0));
+	vector<vector<int>> newB(newSize, vector<int>(newSize, 0));
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			newA[i][j] = A[i][j];
+			newB[i][j] = B[i][j];
+		}
+	}
+
+	vector<vector<int>> A11(newSize / 2, vector<int>(newSize / 2, 0));
+	vector<vector<int>> A12(newSize / 2, vector<int>(newSize / 2, 0));
+	vector<vector<int>> A21(newSize / 2, vector<int>(newSize / 2, 0));
+	vector<vector<int>> A22(newSize / 2, vector<int>(newSize / 2, 0));
+	vector<vector<int>> B11(newSize / 2, vector<int>(newSize / 2, 0));
+	vector<vector<int>> B12(newSize / 2, vector<int>(newSize / 2, 0));
+	vector<vector<int>> B21(newSize / 2, vector<int>(newSize / 2, 0));
+	vector<vector<int>> B22(newSize / 2, vector<int>(newSize / 2, 0));
+	for (int i = 0; i < newSize / 2; i++) {
+		for (int j = 0; j < newSize / 2; j++) {
+			A11[i][j] = newA[i][j];
+			A12[i][j] = newA[i][j + newSize / 2];
+			A21[i][j] = newA[i + newSize / 2][j];
+			A22[i][j] = newA[i + newSize / 2][j + newSize / 2];
+
+			B11[i][j] = newB[i][j];
+			B12[i][j] = newB[i][j + newSize / 2];
+			B21[i][j] = newB[i + newSize / 2][j];
+			B22[i][j] = newB[i + newSize / 2][j + newSize / 2];
+		}
+	}
+
+	vector<vector<int>> M1 = strassenMatrixMultiply(matrixAddition(A11, A22), matrixAddition(B11, B22));
+	vector<vector<int>> M2 = strassenMatrixMultiply(matrixAddition(A21, A22), B11);
+	vector<vector<int>> M3 = strassenMatrixMultiply(A11, matrixSubtraction(B12, B22));
+	vector<vector<int>> M4 = strassenMatrixMultiply(A22, matrixSubtraction(B21, B11));
+	vector<vector<int>> M5 = strassenMatrixMultiply(matrixAddition(A11, A12), B22);
+	vector<vector<int>> M6 = strassenMatrixMultiply(matrixSubtraction(A21, A11), matrixAddition(B11, B12));
+	vector<vector<int>> M7 = strassenMatrixMultiply(matrixSubtraction(A12, A22), matrixAddition(B21, B22));
+
+	vector<vector<int>> C11 = matrixAddition(matrixSubtraction(matrixAddition(M1, M4), M5), M7);
+	vector<vector<int>> C12 = matrixAddition(M3, M5);
+	vector<vector<int>> C21 = matrixAddition(M2, M4);
+	vector<vector<int>> C22 = matrixAddition(matrixAddition(matrixSubtraction(M1, M2), M3), M6);
+
+	vector<vector<int>> result(newSize, vector<int>(newSize));
+	for (int i = 0; i < newSize / 2; i++) {
+		for (int j = 0; j < newSize / 2; j++) {
+			result[i][j] = C11[i][j];
+			result[i][j + newSize / 2] = C12[i][j];
+			result[i + newSize / 2][j] = C21[i][j];
+			result[i + newSize / 2][j + newSize / 2] = C22[i][j];
+		}
+	}
+
+	// Матрица без лишних нулей
+	vector<vector<int>> finalResult(n, vector<int>(n));
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			finalResult[i][j] = result[i][j];
+		}
+	}
+
+	return finalResult;
+}
+
+// Функция для умножения матриц классическим способом
+vector<vector<int>> classicMatrixMultiply(const vector<vector<int>>& matA, const vector<vector<int>>& matB) {
+
+	if (matA[0].size() != matB.size()) {
+		cout << "Невозможно умножить матрицы: неподходящие размеры" << endl;
+		return {};
+	}
+
+	vector<vector<int>> result(matA.size(), vector<int>(matB[0].size(), 0));
+
+	for (int i = 0; i < matA.size(); i++) {
+		for (int j = 0; j < matB[0].size(); j++) {
+			for (int k = 0; k < matA[0].size(); k++) {
+				result[i][j] += matA[i][k] * matB[k][j];
+			}
+		}
+	}
+
+	return result;
+}
+
+// Функция для умножения матриц с использованием алгоритма Винограда
+vector<vector<int>> matrixMultiplyVinograd(const vector<vector<int>>& matA, const vector<vector<int>>& matB) {
+	int rowsA = matA.size();
+	int colsA = matA[0].size();
+	int rowsB = matB.size();
+	int colsB = matB[0].size();
+
+	if (colsA != rowsB) {
+		cout << "Невозможно умножить матрицы: неподходящие размеры" << endl;
+		return {};
+	}
+
+	vector<vector<int>> result(rowsA, vector<int>(colsB, 0));
+
+	// Предварительные вычисления для оптимизации
+	vector<int> rowFactor(rowsA, 0);
+	vector<int> colFactor(colsB, 0);
+	for (int i = 0; i < rowsA; i++) {
+		for (int k = 0; k < colsA - 1; k += 2) {
+			rowFactor[i] += matA[i][k] * matA[i][k + 1];
+		}
+	}
+	for (int j = 0; j < colsB; j++) {
+		for (int k = 0; k < rowsB - 1; k += 2) {
+			colFactor[j] += matB[k][j] * matB[k + 1][j];
+		}
+	}
+
+	// Основной цикл умножения с использованием предварительных вычислений
+	for (int i = 0; i < rowsA; i++) {
+		for (int j = 0; j < colsB; j++) {
+			result[i][j] = -rowFactor[i] - colFactor[j];
+			for (int k = 0; k < colsA - 1; k += 2) {
+				result[i][j] += (matA[i][k] + matB[k + 1][j]) * (matA[i][k + 1] + matB[k][j]);
+			}
+			if (colsA % 2 != 0) {
+				result[i][j] += matA[i][colsA - 1] * matB[rowsB - 1][j];
+			}
+		}
+	}
+
+	return result;
+}
+
+// Функция для вывода матрицы
+void printMatrix(const vector<vector<int>>& mat) {
+	for (const auto& row : mat) {
+		for (int val : row) {
+			cout << val << " ";
+		}
+		cout << endl;
+	}
+}
+
+int main(){
+	setlocale(0, "");
+	cout << "Каким методом Вы хотите перемножить матрицы?" << endl;
+	cout << "Классический метод - 1" << endl;
+	cout << "Метод Винограда - 2" << endl;
+	cout << "Метод Штрассена - 3" << endl;
+	int choose = 0;
+	double medtime = 0;
+	cin >> choose;
+
+	if (choose == 1) {
+
+		vector<vector<int>> matrixA = { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} };
+		vector<vector<int>> matrixB = { {9, 8, 7}, {6, 5, 4}, {3, 2, 1} };
+
+		cout << "Матрица A:" << endl;
+		printMatrix(matrixA);
+		cout << endl;
+
+		cout << "Матрица B:" << endl;
+		printMatrix(matrixB);
+		cout << endl;
+
+		clock_t start_time = clock();
+		vector<vector<int>> result = classicMatrixMultiply(matrixA, matrixB);
+		clock_t end_time = clock();
+		double cpu_time = (double(end_time - start_time)) / CLOCKS_PER_SEC;
+		medtime += cpu_time;
+		cout << "Результат умножения классическим методом:" << endl;
+		printMatrix(result);
+		cout << "Процессорное время: " << cpu_time << endl;
+		cout << endl;
+	}
+	else if (choose == 2) {
+
+		vector<vector<int>> matrixA = { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} };
+		vector<vector<int>> matrixB = { {9, 8, 7}, {6, 5, 4}, {3, 2, 1} };
+
+		cout << "Матрица A:" << endl;
+		printMatrix(matrixA);
+		cout << endl;
+
+		cout << "Матрица B:" << endl;
+		printMatrix(matrixB);
+		cout << endl;
+
+		clock_t start_time = clock();
+		vector<vector<int>> result = matrixMultiplyVinograd(matrixA, matrixB);
+		clock_t end_time = clock();
+		double cpu_time = (double(end_time - start_time)) / CLOCKS_PER_SEC;
+		medtime += cpu_time;
+		cout << "Результат умножения с помощью алгоритма Винограда:" << endl;
+		printMatrix(result);
+		cout << "Процессорное время: " << cpu_time << endl;
+		cout << endl;
+	}
+	else if (choose == 3) {
+		vector<vector<int>> matrixA = { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} };
+		vector<vector<int>> matrixB = { {9, 8, 7}, {6, 5, 4}, {3, 2, 1} };
+		cout << "Матрица A:" << endl;
+		printMatrix(matrixA);
+		cout << endl;
+		cout << "Матрица B:" << endl;
+		printMatrix(matrixB);
+		cout << endl;
+
+		clock_t start_time = clock();
+		vector<vector<int>> result = strassenMatrixMultiply(matrixA, matrixB);
+		clock_t end_time = clock();
+		double cpu_time = (double(end_time - start_time)) / CLOCKS_PER_SEC;
+		medtime += cpu_time;
+		cout << "Результат умножения с помощью алгоритма Штрассена:" << endl;
+		printMatrix(result);
+		cout << "Процессорное время: " << cpu_time << endl;
+		cout << endl;
+	}
+	else {
+		cout << "Неверный выбор" << endl;
+	}
+	return 0;
+}
+\end{lstlisting}
+
+\newpage
+\begin{center}
+    \section{Исследовательская часть}
+\end{center}
+
+Далее на рисунках представлен результат работы программы.
+
+Результат работы программы умножения матриц $3 \times 3$ классическим способом, приведен на рис.~\ref{img:grap1}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test1.PNG}}
+    \caption{Пример №1}
+    \label{img:grap1}
+\end{figure}
+
+Результат работы программы умножения матриц $3 \times 3$ методом Винограда, приведен на рис.~\ref{img:grap2}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test2.PNG}}
+    \caption{Пример №2}
+    \label{img:grap2}
+\end{figure}
+
+\newpage
+Результат работы программы умножения матриц $3 \times 3$ методом Штрассена, приведен на рис.~\ref{img:grap3}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test3.PNG}}
+    \caption{Пример №3}
+    \label{img:grap3}
+\end{figure}
+
+Результат работы программы умножения матриц $6 \times 6$ классическим способом, приведен на рис.~\ref{img:grap4}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test4.PNG}}
+    \caption{Пример №4}
+    \label{img:grap4}
+\end{figure}
+
+\newpage
+Результат работы программы умножения матриц $6 \times 6$ методом Винограда, приведен на рис.~\ref{img:grap5}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test5.PNG}}
+    \caption{Пример №5}
+    \label{img:grap5}
+\end{figure}
+
+\newpage
+Результат работы программы умножения матриц $6 \times 6$ методом Штрассена, приведен на рис.~\ref{img:grap6}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test6.PNG}}
+    \caption{Пример №6}
+    \label{img:grap6}
+\end{figure}
+
+\newpage
+Результат работы программы умножения матриц с различнвми размерами классическим способом, приведен на рис.~\ref{img:grap7}. 
+\begin{figure}[h!]
+    \center{\includegraphics[scale=0.92]{test7.PNG}}
+    \caption{Пример №7}
+    \label{img:grap7}
+\end{figure}
+
+Классический способ умножения матриц имеет временную сложность $O(n^3)$, где $n$ --- размерность матрицы. Это означает, что время выполнения операции умножения матриц линейно зависит от куба размера матрицы. Как результат, общее количество операций для умножения двух матриц размером $m \times p$ и $p \times n$ составляет $m \cdot p \cdot n$ умножений и $m \cdot n \cdot (p - 1)$ 
+сложений.
+
+Умножение матриц с помощью метода Винограда дает больший выигрыш во временной сложности. Она составяет $O(n^{2,3755})$, где $n$ --- размерность матрицы. Результаты подсчета умножений и сложений, где размер матрицы $A$ равен $a \times b$, размер матрицы $B$ равен $b \times c$ и $d = \frac{b}{2}$ наглядно продемонстрированы в таблице~\ref{tab:my_label}.
+
+\begin{table}[h!]
+\begin{center}
+\caption{Количество операций в методе Винограда}
+\label{tab:my_label}
+    \centering
+    \begin{tabular}{ | m{5cm} | m{5cm}| m{6cm}|} 
+  \hline
+  Обработка матрицы & Умножение & Сложение \\ 
+  \hline
+  Предварительная обработка матрицы A & $a \cdot d$ & $a \cdot (d - 1)$\\
+  \hline
+  Предварительная обработка матрицы B & $c \cdot d$ & $c \cdot (d - 1)$\\
+  \hline
+  Вычисление матрицы R & $a \cdot c \cdot d$ & $a \cdot c \cdot (2d + d + 1)$\\
+  \hline
+  Всего & $\displaystyle\frac{abc + ab + bc}{2}$ & $\displaystyle\frac{a(b - 2) + c(b - 2) + ac(3b + 2)}{2}$\\
+  \hline
+  Сложение двух ненулевых матриц одинакого размера & Ненулевые матрицы M и N & Результирующая ненулевая матрица\\
+  \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Метод Штрассена умножает матрицы за время  $O(n^{\log _{2}7})=O(n^{2.81})$, что даёт выигрыш на больших плотных матрицах. Если обозначить количество операций умножения как $M(n)$, то для обычного метода умножения матриц размера $2^n \times 2^n$ имеем $M(n) = 8^n$. Алгоритм Штрассена снижает количество операций умножения до $M(n) = 7^n$, что означает уменьшение сложности. Он достигает этого за счет уменьшения числа стандартных умножений матриц.
+
+Исходя из вышеперечисленных фатктов, можно сделать вывод, что самым эффективным алогритмом в умножении матриц будет является алгоритм Винограда. Он умножает две матрицы за небольшое количество времени, затрачивает минимальное количетсво памяти и несложен в реализации.
+
+\newpage
+\begin{center}
+    \section*{Заключение}
+    \addcontentsline{toc}{section}{Заключение}
+\end{center}
+Цель лабораторной работы достигнута. Проведён сравнительный анализ алгоритмов умножения матриц.
+
+В результате выполнения лабораторной работы были выполнены все задачи.
+\begin{enumerate}
+\item Описаны три алгоритма умножения матриц --- классический, Винограда и Штрассена.
+\item Реализованы разработанные алгоритмы.
+\item Выполнено тестирование реализации разработанных алгоритмов.
+\item Дана оценка сложности алгоритмов.
+\item Оценена эффективность каждого алгоритма (по памяти и времени).
+\end{enumerate}
+
+\newpage
+\begin{center}
+\begin{thebibliography}{}
+\addcontentsline{toc}{section}{Список используемых источников}
+\bibitem{book} Основы современных алгоритмов 2-е дополненное издание / Дж. Макконелл // под ред. С.Кландо, доп. М.В.Ульянова. --- Москва: ТЕХНОСФЕРА, 2004. --- 370 с.
+\end{thebibliography}
+\end{center}
+
+\end{document}

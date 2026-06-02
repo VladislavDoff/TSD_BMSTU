@@ -1,0 +1,912 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage{indentfirst, setspace}
+\usepackage{tabularx, multirow}
+\usepackage[normalem]{ulem}
+\usepackage[style=russian]{csquotes}
+\usepackage[english,russian]{babel}
+\usepackage{hyperref}
+\usepackage{ragged2e}
+\usepackage{caption}
+\usepackage{wrapfig}
+\usepackage{amsmath}
+\usepackage{tikz}
+\makeatletter
+\def\@biblabel#1{#1. }
+\makeatother
+\captionsetup[table]{justification=raggedright,singlelinecheck=off}
+\captionsetup[lstlisting]{justification=raggedright,singlelinecheck=off}
+\captionsetup{labelsep=endash}
+\usepackage{listings}
+\linespread{1.3}
+\lstset{
+  language=C++, % Язык программирования (можно выбрать другой)
+  basicstyle=\ttfamily\small, % Основной стиль шрифта
+  keywordstyle=\color{blue}, % Стиль ключевых слов
+  breaklines=true,
+  commentstyle=\color{green}, % Стиль комментариев
+  stringstyle=\color{red}, % Стиль строк
+  extendedchars=\true,
+  showstringspaces=false,
+}
+
+\usepackage[left=20mm, top=15mm, right=15mm, bottom=20mm]{geometry}
+
+
+\begin{document}
+\begin{titlepage}
+     \fontsize{12}{12}\selectfont
+
+  {\centering
+
+   \begin{bf}
+
+    \begin{wrapfigure}{l}{19mm}
+        \includegraphics[width=22mm]{emblem.jpeg}
+    \end{wrapfigure}
+
+
+    \noindent Министерство науки и высшего образования Российской Федерации
+
+    \noindent Федеральное государственное бюджетное образовательное учреждение высшего образования
+
+    \noindent \enquote{Московский государственный технический унверситет
+
+     \noindent имени Н.Э. Баумана
+
+     \noindent (национальный исследовательский университет)}
+
+    \noindent (МГТУ им. Н.Э. Баумана)
+
+   \end{bf}
+  }
+
+  \vspace{0.4cm}
+
+  {\setstretch{0.1}
+   \noindent\rule{\textwidth}{1mm}
+   \noindent\rule{\textwidth}{0.5mm}
+
+  }
+
+  \fontsize{14}{21}\selectfont
+
+  \noindent\begin{tabularx}{\textwidth}{l >{\centering\arraybackslash}X}
+   ФАКУЛЬТЕТ & \flqq Фундаментальные Науки\frqq \\ \cline{2-2}
+
+   КАФЕДРА & ФН-12 \flqq Математическое моделирование\frqq \\ \cline{2-2}
+  \end{tabularx}
+
+
+  \vspace{1cm}
+
+
+  \begin{center}
+   \begin{bf}
+
+    \fontsize{24}{36}\selectfont
+    ОТЧЕТ
+
+    \fontsize{20}{30}\selectfont
+    ПО ЛАБОРАТОРНОЙ РАБОТЕ НА ТЕМУ:
+
+    Сжатое хранение разреженных матриц
+
+   \end{bf}
+  \end{center}
+
+  \fontsize{14}{21}\selectfont
+  \vspace{5cm}
+
+
+  \noindent\begin{tabularx}{\textwidth}{ X >{\centering}p{4cm} p{1cm} c }
+   Студент: & & & Подобедов В. В. \\ \cline{2-2} \cline{4-4}
+   & \fontsize{10}{15}\selectfont дата, подпись & & \fontsize{10}{15}\selectfont Ф.И.О. \\
+   Преподаватель: & & & Волкова Л. Л.\\ \cline{2-2} \cline{4-4}
+   & \fontsize{10}{15}\selectfont дата, подпись & & \fontsize{10}{15}\selectfont Ф.И.О.
+  \end{tabularx}
+
+  \vspace{\fill}
+
+  \begin{center}
+   \it{Москва}, 2023
+  \end{center}
+
+  \thispagestyle{empty}
+\end{titlepage}
+
+
+\renewcommand{\contentsname}{Содержание}
+\setcounter{page}{2}
+\tableofcontents
+
+
+\newpage
+\begin{center}
+   \section*{Введение} 
+\addcontentsline{toc}{section}{Введение}
+\end{center}
+
+\justifying
+\textbf{Цель лабораторной работы}: провести сравнительный анализ алгоритмов поиска редакционных расстояний.
+
+Для достижения поставленной цели требуется решить следующие \textbf{задачи}.
+\begin{enumerate}
+\item Описать две схемы сжатого хранения разреженных матриц --- Дженнингса и по варианту: кольцевая схема или разреженный строчный формат.
+\item Разработать алгоритмы сжатия, распаковки, сложения матриц для обеих схем и алгоритм умножения матриц для схемы по варианту.
+\item Реализовать разработанные алгоритмы.
+\item Выполнить тестирование реализации разработанных алгоритмов.
+\item Оценить эффективность сжатого хранения матриц в обоих схемах для матрицы действительных чисел с 5--10~\% ненулевых элементов.
+\end{enumerate}
+
+Согласно варианту, требуется разработать следующие две схемы.
+\begin{enumerate}
+\item Схема Дженнингса. Сжатые матрицы нужно сложить, если это возможно, и распаковать, записав результат в файл.
+\item Схема Рейнбольдта-Местеньи. Сложить и умножить сжатые матрицы, если это допускают размеры матриц; запаковать их и записать результаты в файл.
+\end{enumerate}
+
+
+\newpage
+\begin{center}
+   \section{Аналитическая часть} 
+\end{center}
+
+\textbf{Матрица} --- математический объект, записываемый в виде прямоугольной таблицы, который представляет собой совокупность строк и столбцов, на пересечении которых находятся его элементы. Количество строк и столбцов задает размер матрицы.
+
+\textbf{Разреженная матрица} --- матрица с 5--10~\% ненулевых значений.
+
+\textbf{Схема Дженнингса} (профильная схема хранения симметричных матриц) --- это эффективный метод представления и хранения разреженных матриц, то есть матриц, в которых большинство элементов равны нулю. Эта схема разработана для оптимизации использования памяти и ускорения операций с разреженными матрицами. Все ненулевые элементы, которые находятся не выше главной диагонали с сохранением порядка хранятся в матрице и, возможно, некоторые нули, если они необходимы для сохранения порядка элементов.
+
+\textbf{Кольцевая схема (Рейнбольта --- Местеньи)} --- это метод представления разреженных матриц, который удобен для хранения данных в виде кольцевых структур, минимизируя количество информации, необходимой для описания ненулевых элементов матрицы.
+
+\newpage
+\begin{center}
+    \section{Конструкторская часть}
+\end{center}
+\subsection{Схема Дженнингса}
+\subsubsection{Описание схемы}
+Схема Дженнингса~\cite{book} --- это метод для хранения симметричных матриц и эффективного выполнения операций над ними. Разреженные матрицы имеют много нулей, и схема Дженнингса позволяет минимизировать использование памяти и ускорить операции с такими матрицами. Основная идея заключается в создании двух массивов:  $AN$ --- массив всех ненулевых элементов, находящихся не выше главной диагонали матрицы и, возможно, служебных нулей (служебным нулём считается такой элемент, который находится либо на главной диагонали, либо в строке между ненулевым элементом и элементом с главной диагонали) и $D$ --- массив индексов элементов из $AN$, лежащих на диагонали матрицы.
+\subsubsection{Сжатие матрицы}
+Для сжатия матрицы по схеме Дженнингса необходимо использовать вышеперечисленные массивы $AN$ и $D$. Для успешного выполнения алгоритма необходимо идти по строкам матрицы и записывать все ненулевые элементы матрицы, находящиеся под главной диагональю. Если был найден первый ненулевой элемент в строке, то записываются все последующие элементы, включая диагональный элемент этой строки. Например, если рассмотреть строку $0, 7, 0, 8, 9$, где $9$ --- элемент главной диагонали, то в $AN$ запишутся числа $7, 0, 8, 9$. Далее, считывается индекс в массиве $AN$, который принадлежит диагональному элементу и добавляется в массив $D$. Курсор смещается на следующую строку, и осуществляется следующий шаг цикла по строкам.
+
+\subsubsection{Сложение разреженных матриц без распаковки}
+Для сложения разреженных матриц нужно сначала сложить самый первый диагональный элемент. Далее нужно рассмотреть разность индексов соседних диагональных элементов. Пользуясь этим фактом, можно заполнить матрицу $AN$ и $D$ для суммы матриц. Если разность индексов соседних элементов в первой матрице больше, чем во второй, то нужно добавлять элементы первой матрицы в $AN$ суммы до того момента, пока разность не станет равной. После того, как разность стала равной нужно складывать элементы и проверять, чтобы сумма не равнялась нулю и добавлять в матрицу суммы $AN$. Когда курсор дойдет до диагонального элемента, то считывается индекс из первого массива $D$ и добавляется в массив $D$ суммы. Аналогично работает если разность индексов соседних элементов во второй матрице больше, чем в первой. Если же разность одинаковая для двух матриц, то элементы суммируются, проверяются на равенство нулю и добавляются в массивы $AN$ и $D$. 
+
+\subsection{Кольцевая схема Рейнбольдта - Местеньи}
+\subsubsection{Описание схемы}
+Кольцевая схема Рейнбольдта --- Местеньи~\cite{book} --- это метод хранения произвольных разреженных матриц. Разреженные матрицы имеют много нулей, и алгоритм Дженнингса позволяет минимизировать использование памяти и ускорить операции с такими матрицами. Основная идея заключается в создании пяти массивов. $AN$ --- массив всех ненулвых элементов матрицы. $NR$ --- индекс (по $AN$) следующего ненулевого элемента той же строки. Последний элемент строки смотрит на начальный элемент строки. $NC$ --- индекс (по $AN$) следующего ненулевого элемента того же столбца. Последний элемент столбца смотрит на начальный элемент столбца. $JR$ --- индекс (по $AN$) начальных элементов строк. $JC$ --- индекс (по $AN$) начальных элементов столбцов. 
+\subsubsection{Сжатие матрицы}
+Для сжатия матрицы используя кольцевую схему необходимо считывать поэлементно матрицу, делать проверку на ненулевой элемент и выполнять следующий алогритм. Если элемент явлется самым первым в строке $i$, то изменить $JR[i]$ с $-1$ на значение счётчика, который был создан в начале программы и добавить ненулевой элемент в конец массива $NR$. Аналогично обновляется массив $JC$. Если элемент является самым первым в столбце $j$, то меняется $JC[j]$ с $-1$ на значение счетчика. Если элемент не является первым в строке, то необходимо идти курсором по массиву $NR$, пока не будет найден элемент, который ссылается на первый элемент строки. Его значение обновить на значение счётчика, а в конец массива добавить индекс первого элемента строки. Аналогичные действия нужно совершить для заполнения массивов $NC$ и $JC$. 
+
+\subsubsection{Сложение разреженных матриц без распаковки}
+В начале выполнения этого действия необходимо проверить сложимы ли матрицы. Если матрицы разных размеров, то сложение не возможно по опредлению. Если же матрицы одинаковых размеров, то необходимо создать три счётчика для каждого из массивов $AN\_1$, $AN\_2$, $AN\_sum$. Для каждого из складываемых массивов найти строчную и столбцовую координату. Если один из элементов находится в строке, которая выше строки другого элемента, то добавить элемент из верхней строки в массив $AN\_sum$ и прибавить к его счётчику единицу. Если элементы находятся в одинаковых строках, то сравнить их стобцовые координаты. Если один из элементов имеет меньшую столбцовую координату, то добавить его в массив $AN\_sum$ и добавить единицу к его счётчику. Если столбцовые и строчные координаты равны, то сложить элементы, проверить их на неравенство нулю и, если проверка пройдена, то добавить в массив $AN\_sum$ их сумму.
+\subsubsection{Умножение разреженных матриц без распаковки}
+При выполнении этого пункта необходимо учитывать, что умножение возможно тогда и только тогда, когда количество строк первой матрицы равно количеству столбцов второй матрицы или количество столбцов первой матрицы равно количеству строк второй матрицы. Если умножение возможно, то используя курсоры по строке одного массива и по столбцу второго массива умножить строку на столбец. Если произведение будет являеться ненулевым, то добавить его в массив произведения $AN$, попутно заполняя другие массивы необходимые для хранения матрицы в кольцевой схеме.
+\newpage
+\begin{center}
+    \section{Технологическая часть}
+\end{center}
+
+Лабораторная работа была реализована на языке программирования C++. Кроме стандартной библиотеки <iostream>, которая предоставляет возможность пользоваься средствами ввода-вывода для стандартной консоли, была подключена библиотека <fstream>. Она включает в себя набор классов, методов и функций, которые предоставляют интерфейс для чтения/записи данных из/в файл. Также для удобства чтения матрицы из файла был подключена библиотека <sstream>, которая нужна для организации работы со строками, через интерфейс потоков.
+
+Функции, разработанные в ходе написания программы, следующие.
+\begin{itemize}
+    \item[---] Функция ``output\_krm'' --- функция, которая считывает матрицу из файла.
+    \item[---] Функция ``djennings'' --- функция, которая выполняет алгоритм сжатия матрицы по схеме Дженнингса.
+    \item[---] Функция ``print\_matrix'' --- функция, которая печатает матрицу в консоль.
+    \item[---] Функция ``inputt\_file'' --- функция, которая записывает матрицу поcле всех преобразований в файл.
+    \item[---] Функция ``compression\_krm '' --- функция, которая выполняет алгоритм сжатия матрицы по кольцевой схеме.
+    \item[---] Функция ``summ\_krm'' --- функция, которая складывает две матрицы для матриц из кольцевой схемы.
+    \item[---] Функция ``multiplic\_krm'' --- функция, которая умножает две матрицы из кольцевой схемы.
+    \item[---] Функция ``num\_col\_el'' --- функция, которая выводит столбец в котором находится элемент.
+    \item[---] Функция ``num\_row\_el'' --- функция, которая выводит номер строки в котром находится элемент.
+    \item[---] Функция ``unpack\_ring\_RM'' --- функция, которая составляет матрицу, пользуясь вспомогательными массивами. 
+    \item[---] Функция ``print\_arrow'' --- функция, которая выводит массив.
+\end{itemize}
+
+В программе реализовано переключение между двумя режимами. Пользователь может самостоятельно выбрать каким алгоритмом он хочет пользоваться. При введении цифры 1 пользователю становится доступна схема Дженнингса. При вводе цифры 2 пользователь имеет возможность доступа к кольцевой схеме.
+
+Далее приведен листинг реализации алгоритмов (листинг~\ref{lst:label1}).
+\begin{lstlisting}[caption={Исходный код программы для работы со схемой Дженнингса или с кольцевой схемой},label={lst:label1}]
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <sstream>
+
+using namespace std;
+
+void output_krm(vector<vector<int>>& matr, string txt, int &row, int &col) {
+	string filename = "C:\\Users\\Kononova\\Desktop\\мгту им Н.Э.Баумана\\3 семестр\\Типы и структуры данных\\лаб_2\\" + txt + ".txt";
+	ifstream inputFile(filename);
+	if (!inputFile.is_open()) {
+		cout << "Не удалось открыть файл" << endl;
+	}
+
+	int rows_1 = 0;
+	int cols_1 = 0;
+	string line_1;
+	while (getline(inputFile, line_1)) {
+		vector<int> row_1;
+		istringstream iss(line_1);
+		int value;
+
+		while (iss >> value) {
+			row_1.push_back(value);
+		}
+
+		if (row_1.size() > 0) {
+			matr.push_back(row_1);
+
+			if (row_1.size() > cols_1) {
+				cols_1 = row_1.size();
+			}
+
+			++rows_1;
+		}
+	}
+	row = rows_1;
+	col = cols_1;
+	inputFile.close();
+}
+
+void djennings(vector<vector<int>>&matrix, vector<int> &AN, vector<int> &D) {
+	for (int i = 0; i < matrix.size(); i++) {
+		bool flagg = false;
+		for (int j = 0; j <= i; j++) {
+			if (matrix[i][j] != 0) {
+				flagg = true;
+			}
+			if (flagg == true || i == j) {
+				AN.push_back(matrix[i][j]);
+				if (i == j) D.push_back(AN.size());
+			}
+		}
+	}
+}
+
+void print_matrix(vector<vector<int>>& matrix) {
+	for (const auto &row : matrix) {
+		for (int num : row) {
+			cout << num << " ";
+		}
+		cout << endl;
+	}
+	cout << endl;
+}
+
+void inputt_file(const vector<vector<int>>& matr, string txt) {
+	string filename = "C:\\Users\\Kononova\\Desktop\\intput" + txt + ".txt";
+	ofstream outputFile(filename);
+
+	if (outputFile.is_open()) {
+		for (const vector<int>& row : matr) {
+			for (int value : row) {
+				outputFile << value << ' ';
+			}
+			outputFile << '\n';
+		}
+
+		outputFile.close();
+		cout << "Данные успешно записаны в файл 'intput" + txt + ".txt'" << std::endl;
+	}
+	else {
+		cerr << "Ошибка открытия файла для записи" << std::endl;
+	}
+}
+
+void compression_krm(vector<vector<int>>&matrix, vector<int> &AN_krm, vector<int> &NR_krm, vector<int> &NC_krm, vector<int> &JR_krm, vector<int> &JC_krm, int &row, int &col) {
+	int counter = 0;
+	for (int i = 0; i < row; i++) {
+		for (int j = 0; j < col; j++) {
+			if (matrix[i][j] != 0) {
+				if (JR_krm[i] == -1) {
+					JR_krm[i] = counter;
+					NR_krm.push_back(counter);
+				}
+				else {
+					int k = JR_krm[i];
+					while (NR_krm[k] != JR_krm[i]) {
+						k = NR_krm[k];
+					}
+					NR_krm[k] = counter;
+					NR_krm.push_back(JR_krm[i]);
+				}
+				if (JC_krm[j] == -1) {
+					JC_krm[j] = counter;
+					NC_krm.push_back(counter);
+				}
+				else {
+					int k = JC_krm[j];
+					while (NC_krm[k] != JC_krm[j]) {
+						k = NC_krm[k];
+					}
+					NC_krm[k] = counter;
+					NC_krm.push_back(JC_krm[j]);
+				}
+				AN_krm.push_back(matrix[i][j]);
+				counter++;
+			}
+		}
+	}
+}
+
+int num_col_el(vector<int>&an, vector<int>&nc, vector<int>&jc, int coord) {
+	for (int i = 0; i < jc.size(); i++) {
+		if (jc[i] == coord) {
+			return i;
+		}
+	}
+	while (true) {
+		if (coord > nc.size() - 1) {
+			return 1;
+		}
+		coord = nc[coord];
+		for (int i = 0; i < jc.size(); i++) {
+			if (jc[i] == coord) {
+				return i;
+			}
+		}
+	}
+}
+
+int num_row_el(vector<int>&an, vector<int>&nr, vector<int>&jr, int coord) {
+	for (int i = 0; i < jr.size(); i++) {
+		if (jr[i] == coord) {
+			return i;
+		}
+	}
+	while (true) {
+		if (coord > nr.size() - 1) {
+			return 1;
+		}
+		coord = nr[coord];
+		for (int i = 0; i < jr.size(); i++) {
+			if (jr[i] == coord) {
+				return i;
+			}
+		}
+	}
+}
+
+void unpack_ring_RM(vector<vector<int>>&a, vector<int>&an, vector<int>&nr, vector<int>&nc, vector<int>&jr, vector<int>&jc) {
+	for (int i = 0; i < an.size(); i++) {
+		int row = num_row_el(an, nr, jr, i);
+		int col = num_col_el(an, nc, jc, i);
+		a[row][col] = an[i];
+	}
+}
+
+void print_arrow(vector<int>&arr) {
+	for (int i = 0; i < arr.size(); i++) {
+		cout << arr[i] << " ";
+	}
+	cout << endl;
+}
+
+
+void summ_krm(vector<vector<int>>&matrix1, vector<vector<int>>&matrix2, vector<int> &AN_krm, vector<int> &NR_krm, vector<int> &NC_krm, vector<int> &JR_krm, vector<int> &JC_krm, int &row_1, int &col_1, int &row_2, int &col_2) {
+	if (row_1 == row_2 && col_1 == col_2) {
+		int counter = 0;
+		for (int i = 0; i < row_1; i++) {
+			for (int j = 0; j < col_1; j++) {
+				if (matrix1[i][j] + matrix2[i][j] != 0) {
+					if (JR_krm[i] == -1) {
+						JR_krm[i] = counter;
+						NR_krm.push_back(counter);
+					}
+					else {
+						int k = JR_krm[i];
+						while (NR_krm[k] != JR_krm[i]) {
+							k = NR_krm[k];
+						}
+						NR_krm[k] = counter;
+						NR_krm.push_back(JR_krm[i]);
+					}
+					if (JC_krm[j] == -1) {
+						JC_krm[j] = counter;
+						NC_krm.push_back(counter);
+					}
+					else {
+						int k = JC_krm[j];
+						while (NC_krm[k] != JC_krm[j]) {
+							k = NC_krm[k];
+						}
+						NC_krm[k] = counter;
+						NC_krm.push_back(JC_krm[j]);
+					}
+					AN_krm.push_back(matrix1[i][j] + matrix2[i][j]);
+					counter++;
+				}
+			}
+		}
+		vector<vector<int>> matrix_krm_summ(row_1, vector<int>(col_1));
+		unpack_ring_RM(matrix_krm_summ, AN_krm, NR_krm, NC_krm, JR_krm, JC_krm);
+		cout << "Матрица суммы" << endl;
+		print_matrix(matrix_krm_summ);
+		cout << "AN суммы матриц: ";
+		print_arrow(AN_krm);
+		cout << "NR суммы матриц: ";
+		print_arrow(NR_krm);
+		cout << "NC суммы матриц: ";
+		print_arrow(NC_krm);
+		cout << "JR суммы матриц: ";
+		print_arrow(JR_krm);
+		cout << "JC суммы матриц: ";
+		print_arrow(JC_krm);
+		cout << endl << endl;
+		inputt_file(matrix_krm_summ, "2");
+	}
+	else {
+		cout << "Невозможно сложить" << endl;
+	}
+}
+
+void multiplic_krm(vector<vector<int>>&matrix1, vector<vector<int>>&matrix2, vector<int> &AN_krm, vector<int> &NR_krm, vector<int> &NC_krm, vector<int> &JR_krm, vector<int> &JC_krm, int &row_1, int &col_1, int &row_2, int &col_2) {
+	if (row_1 == col_2 || row_2 == col_1) {
+		vector<vector<int>>mult(row_1, vector<int>(col_2));
+		for (int i = 0; i < row_1; i++) {
+			for (int j = 0; j < col_2; j++) {
+				for (int k = 0; k < col_1; k++) {
+					mult[i][j] += matrix1[i][k] * matrix2[k][j];
+				}
+			}
+		}
+		compression_krm(mult, AN_krm, NR_krm, NC_krm, JR_krm, JC_krm, row_1, col_2);
+		vector<vector<int>> matrix_krm(row_1, vector<int>(col_2));
+		unpack_ring_RM(matrix_krm, AN_krm, NR_krm, NC_krm, JR_krm, JC_krm);
+		cout << "Матрица произведения" << endl;
+		print_matrix(matrix_krm);
+		cout << "AN произведения матриц: ";
+		print_arrow(AN_krm);
+		cout << "NR произведения матриц: ";
+		print_arrow(NR_krm);
+		cout << "NC произведения матриц: ";
+		print_arrow(NC_krm);
+		cout << "JR произведения матриц: ";
+		print_arrow(JR_krm);
+		cout << "JC произведения матриц: ";
+		print_arrow(JC_krm);
+		inputt_file(matrix_krm, "3");
+	}
+	else {
+		cout << "Умножение невозможно" << endl;
+	}
+}
+
+
+int main() {
+	setlocale(0, "");
+	int choose = 0;
+	cout << "Алгоритм Дженнингса - 1, кольцевая схема - 2: ";
+	cin >> choose;
+	if (choose == 1) {
+		vector<vector<int>> matrix_1;
+		int row_1 = 0, col_1 = 0;
+		output_krm(matrix_1, "matr_1", row_1, col_1);
+		cout << "Первая матрица" << endl;
+		print_matrix(matrix_1);
+		vector<int> AN_1;
+		vector<int> D_1;
+		djennings(matrix_1, AN_1, D_1);
+		cout << "AN первой матрицы: ";
+		print_arrow(AN_1);
+		cout << "D первой матрицы: ";
+		print_arrow(D_1);
+		cout << endl;
+
+		vector<vector<int>> matrix_2;
+		int row_2 = 0, col_2 = 0;
+		output_krm(matrix_2, "matr_2", row_2, col_2);
+		cout << "Вторая матрица" << endl;
+		print_matrix(matrix_2);
+		vector<int> AN_2;
+		vector<int> D_2;
+		djennings(matrix_2, AN_2, D_2);
+		cout << "AN второй матрицы: ";
+		print_arrow(AN_2);
+		cout << "AN второй матрицы: ";
+		print_arrow(D_2);
+		cout << endl;
+
+		vector<int> summ_matr;
+		vector<int> D_summ_matr;
+		if (D_1.size() == D_2.size()) {
+			for (int i = 0; i < D_1.size(); i++) {
+				if (i == 0) {
+					summ_matr.push_back(AN_1[i] + AN_2[i]);
+					D_summ_matr.push_back(1);
+				}
+				else {
+					int razn_1 = D_1[i] - D_1[i - 1];
+					int razn_2 = D_2[i] - D_2[i - 1];
+					if (razn_1 < razn_2) {
+						for (int k = 0; k < razn_2 - razn_1; k++) {
+							summ_matr.push_back(AN_2[D_2[i - 1] + k]);
+						}
+						if (razn_1 > 2) {
+							for (int h = 0; h < razn_1 - 1; h++) {
+								int check = AN_1[D_1[i - 1] + h] + AN_2[D_1[i - 1] + h];
+								if (check != 0) summ_matr.push_back(check);
+							}
+						}
+					}
+					if (razn_1 > razn_2) {
+						for (int k = 0; k < razn_1 - razn_2; k++) {
+							summ_matr.push_back(AN_1[D_1[i - 1] + k]);
+						}
+						if (razn_2 > 2) {
+							for (int h = 0; h < razn_2 - 1; h++) {
+								int check = AN_1[D_2[i - 1] + h] + AN_2[D_2[i - 1] + h];
+								if (check != 0) summ_matr.push_back(check);
+							}
+						}
+					}
+					summ_matr.push_back(AN_1[D_1[i] - 1] + AN_2[D_2[i] - 1]);
+					D_summ_matr.push_back(summ_matr.size());
+				}
+			}
+			vector<vector<int>> matrix(D_summ_matr.size(), vector<int>(D_summ_matr.size()));
+			for (int i = 0; i < D_summ_matr.size(); i++) {
+				matrix[i][i] = summ_matr[D_summ_matr[i] - 1];
+				if (i != 0) {
+					int null_count = 0;
+					int h = D_summ_matr[i - 1] + 1;
+					while (h < D_summ_matr[i]) {
+						matrix[null_count][i] = summ_matr[D_summ_matr[i - 1] + null_count];
+						matrix[i][null_count] = summ_matr[D_summ_matr[i - 1] + null_count];
+						null_count++;
+						h++;
+					}
+				}
+			}
+			cout << "Сумма матриц: " << endl;
+			print_matrix(matrix);
+			cout << "AN суммы матриц: ";
+			print_arrow(summ_matr);
+			cout << "D суммы матриц";
+			print_arrow(D_summ_matr);
+			cout << endl;
+			inputt_file(matrix, "1");
+			cout << endl;
+		}
+		else {
+			cout << "Сложение матриц невозможно" << endl;
+		}
+	}
+	else {
+		vector<vector<int>> matrix_3;
+		int row_3 = 0, col_3 = 0;
+		output_krm(matrix_3, "test1", row_3, col_3);
+		cout << "Первая матрица" << endl;
+		print_matrix(matrix_3);
+		vector<int> AN_krm_1;
+		vector<int> NR_krm_1;
+		vector<int> NC_krm_1;
+		vector<int> JR_krm_1(row_3, -1);
+		vector<int> JC_krm_1(col_3, -1);
+		compression_krm(matrix_3, AN_krm_1, NR_krm_1, NC_krm_1, JR_krm_1, JC_krm_1, row_3, col_3);
+		cout << "AN первой матрицы: ";
+		print_arrow(AN_krm_1);
+		cout << "NR первой матрицы: ";
+		print_arrow(NR_krm_1);
+		cout << "NC первой матрицы: ";
+		print_arrow(NC_krm_1);
+		cout << "JR первой матрицы: ";
+		print_arrow(JR_krm_1);
+		cout << "JC первой матрицы: ";
+		print_arrow(JC_krm_1);
+		cout << endl << endl;
+
+		vector<vector<int>> matrix_4;
+		int row_4 = 0, col_4 = 0;
+		output_krm(matrix_4, "test2", row_4, col_4);
+		cout << "Вторая матрица" << endl;
+		print_matrix(matrix_4);
+		vector<int> AN_krm_2;
+		vector<int> NR_krm_2;
+		vector<int> NC_krm_2;
+		vector<int> JR_krm_2(row_4, -1);
+		vector<int> JC_krm_2(col_4, -1);
+		compression_krm(matrix_4, AN_krm_2, NR_krm_2, NC_krm_2, JR_krm_2, JC_krm_2, row_4, col_4);
+		cout << "AN второй матрицы: ";
+		print_arrow(AN_krm_2);
+		cout << "NR второй матрицы: ";
+		print_arrow(NR_krm_2);
+		cout << "NC второй матрицы: ";
+		print_arrow(NC_krm_2);
+		cout << "JR второй матрицы: ";
+		print_arrow(JR_krm_2);
+		cout << "JC второй матрицы: ";
+		print_arrow(JC_krm_2);
+		cout << endl << endl;
+
+		vector<int> AN_krm_sum;
+		vector<int> NR_krm_sum;
+		vector<int> NC_krm_sum;
+		vector<int> JR_krm_sum(row_3, -1);
+		vector<int> JC_krm_sum(col_3, -1);
+		summ_krm(matrix_3, matrix_4, AN_krm_sum, NR_krm_sum, NC_krm_sum, JR_krm_sum, JC_krm_sum, row_3, col_3, row_4, col_4);	
+		
+
+		vector<int> AN_krm_mult;
+		vector<int> NR_krm_mult;
+		vector<int> NC_krm_mult;
+		vector<int> JR_krm_mult(row_3, -1);
+		vector<int> JC_krm_mult(col_4, -1);
+		multiplic_krm(matrix_3, matrix_4, AN_krm_mult, NR_krm_mult, NC_krm_mult, JR_krm_mult, JC_krm_mult, row_3, col_3, row_4, col_4);
+		
+	}
+	return 0;
+}
+\end{lstlisting}
+
+Для проверки работоспособности программы были выполнены следующие тесты. Тесты на сложение матриц представлены в таблице \ref{tab:my_label}
+\begin{table}[h]
+\begin{center}
+\caption{Тесты на сложние матриц}
+\label{tab:my_label}
+    \centering
+    \begin{tabular}{ | m{5cm} | m{5cm}| m{5cm}|} 
+  \hline
+  Описание теста & Входные данные & Ожидаемый результат \\ 
+  \hline
+  Сложение матриц с несовпадающими размерами & Две квадратные матрицы разных размеров: $a \times a$ и $b \times b$ & Ошибка\\
+  \hline
+  Сложение нулевых матриц & Две нулевые матрицы одинакого размера $n \times n$ & Нулевая матрица размера $n \times n$\\
+  \hline
+  Сложение нулевой матрицы M и ненулевой матрицы N & Матрица из нулевых элементов размера $n \times n$ и ненулевая матрица размера $n \times n$ & Ненулевая матрица N\\
+  \hline
+  Сложение ненулевой матрицы M и нулевой матрицы N & Матрица из ненулевых элементов размера $n \times n$ и нулевая матрица размера $n \times n$ & Ненулевая матрица M\\
+  \hline
+  Сложение двух ненулевых матриц одинакого размера & Ненулевые матрицы M и N & Результирующая ненулевая матрица\\
+  \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Пример сложения ненулевых матриц A и B размеров $n \times m$: 
+
+\[
+\begin{pmatrix}
+    1 & 0 & 7 & 0\\
+    0 & 2 & 0 & 8\\ 
+    7 & 0 & 3 & 6\\
+    0 & 8 & 6 & 4\\
+\end{pmatrix}
++
+\begin{pmatrix}
+    7 & 8 & 0 & 6\\
+    8 & 9 & 0 & 0\\ 
+    0 & 0 & 3 & 0\\
+    6 & 0 & 0 & 4\\
+\end{pmatrix}
+=
+\begin{pmatrix}
+    8 & 8 & 7 & 6\\
+    8 & 11 & 0 & 8\\ 
+    7 & 0 & 6 & 6\\
+    6 & 8 & 6 & 8\\
+\end{pmatrix}
+\]
+
+Пример сложения нулевой матрицы A и ненулевой матрицы B размеров $n \times n$:
+
+\[
+\begin{pmatrix}
+    0 & 0 & 0 & 0\\
+    0 & 0 & 0 & 0\\ 
+    0 & 0 & 0 & 0\\
+    0 & 0 & 0 & 0\\
+\end{pmatrix}
++
+\begin{pmatrix}
+    1 & 2 & 3 & 4\\
+    5 & 6 & 7 & 8\\ 
+    9 & 10 & 11 & 12\\
+    13 & 14 & 15 & 16\\
+\end{pmatrix}
+=
+\begin{pmatrix}
+    1 & 2 & 3 & 4\\
+    5 & 6 & 7 & 8\\ 
+    9 & 10 & 11 & 12\\
+    13 & 14 & 15 & 16\\
+\end{pmatrix}
+\]
+
+Для проверки работоспособности умножения были выполнены следующие тесты. Тесты на умножение матриц представлены в таблице \ref{tab:my_label1}
+\begin{table}[h]
+\begin{center}
+\caption{Тесты на умножение матриц}
+\label{tab:my_label1}
+    \centering
+    \begin{tabular}{ | m{5cm} | m{5cm}| m{5cm}|} 
+  \hline
+  Описание теста & Входные данные & Ожидаемый результат \\ 
+  \hline
+  Умножение матриц с несовпадающими размерами & Две квадратные матрицы разных размеров: $a \times b$ и $c \times d$ & Ошибка\\
+  \hline
+  Умножение нулевых матриц & Две нулевые матрицы разного размера $a \times b$ на $b \times c$ & Нулевая матрица размера $a \times c$\\
+  \hline
+  Умножение нулевой матрицы M и ненулевой матрицы N & Матрица из нулевых элементов размера $a \times b$ и ненулевая матрица размера $b \times c$ & Нулевая матрица размера $a \times c$\\
+  \hline
+  Умножение ненулевой матрицы M и нулевой матрицы N & Матрица из ненулевых элементов размера $a \times b$ и нулевая матрица размера $b \times c$ & Нулевая матрица размера $a \times c$\\
+  \hline
+  Умножение двух ненулевых матриц & Ненулевые матрицы M размера $a \times b$ и N размера $b \times c$ & Результирующая ненулевая матрица размера $a \times c$\\
+  \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Пример умножения ненулевых матриц A и B размеров $n \times m$: 
+
+\[
+\begin{pmatrix}
+    2 & 0 & 5 & 4\\
+    -5 & 0 & 9 & 0\\ 
+    0 & 0 & 0 & 3\\
+    1 & 0 & 7 & 0\\
+    0 & 0 & 1 & 0\\
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+    1 & 2 & 0 & 0 & 5\\
+    0 & 7 & 8 & 0 & 10\\
+    0 & 12 & 0 & 0 & 0\\
+    0 & 17 & 0 & 19 & 0\\
+\end{pmatrix}
+=
+\begin{pmatrix}
+    2 & 132 & 0 & 76 & 10\\
+    -5 & 98 & 0 & 0 & -25\\
+    0 & 51 & 0 & 57 & 0\\
+    1 & 86 & 0 & 0 & 5\\
+    0 & 12 & 0 & 0 & 0\\
+\end{pmatrix}
+\]
+
+Пример умножения нулевой матрицы A и ненулевой матрицы B размеров $n \times m$ и $m \times p$ соответсвенно:
+
+\[
+\begin{pmatrix}
+    0 & 0 & 0 & 0\\
+    0 & 0 & 0 & 0\\ 
+    0 & 0 & 0 & 0\\
+    0 & 0 & 0 & 0\\
+    0 & 0 & 0 & 0\\
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+    1 & 2 & 3 & 4 & 17\\
+    5 & 6 & 7 & 8 & 18\\ 
+    9 & 10 & 11 & 12 & 19\\
+    13 & 14 & 15 & 16 & 20\\
+\end{pmatrix}
+=
+\begin{pmatrix}
+    0 & 0 & 0 & 0 & 0\\
+    0 & 0 & 0 & 0 & 0\\ 
+    0 & 0 & 0 & 0 & 0\\
+    0 & 0 & 0 & 0 & 0\\
+    0 & 0 & 0 & 0 & 0\\
+\end{pmatrix}
+\]
+
+Все тесты были пройдены успешно.
+
+\newpage
+\begin{center}
+    \section{Исследовательская часть}
+\end{center}
+
+Далее на рисунках предствалены промежуточные результаты программы и входные файлы и выходной файл, сформированный программой.
+
+Результат вычисления суммы матриц разного размера по схеме Дженнингса приведен на рис. ~\ref{img:grap1}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test_1.PNG}}
+    \caption{Работоспособность программы сложения по схеме Дженнингса}
+    \label{img:grap1}
+\end{figure}
+\newpage
+Результат вычисления суммы различных матриц одинакового размера по схеме Дженнингса приведен на рис. ~\ref{img:grap2}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test_2.PNG}}
+    \caption{Работоспособность программы сложения по схеме Дженнингса}
+    \label{img:grap2}
+\end{figure}
+\newpage
+Результат вычисления суммы различных матриц одинакового размера по схеме Дженнингса, где одна из матриц нулевая приведен на рис. ~\ref{img:grap3}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test_3.PNG}}
+    \caption{Работоспособность программы сложение по схеме Дженнингса третий тест}
+    \label{img:grap3}
+\end{figure}
+\newpage
+Результат вычисления суммы нулевых матриц по схеме Дженнингса приведен на рис. ~\ref{img:grap4}. 
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm, height=10cm]{test_4.PNG}}
+    \caption{Работоспособность программы cложения по схеме Дженнингса}
+    \label{img:grap4}
+\end{figure}
+
+Результат вычисления суммы ненулевых матриц различного размера, используя кольцевую схему приведен на рис. ~\ref{img:grap5}.
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm, height=10cm]{test_5.PNG}}
+    \caption{Работоспособность программы сложения по кольцевой схеме}
+    \label{img:grap5}
+\end{figure}
+\newpage
+Результат вычисления суммы нулевых матриц одинакового размера, используя кольцевую схему приведен на рис. ~\ref{img:grap6}.
+\begin{figure}[h!]
+    \center{\includegraphics{test_6.PNG}}
+    \caption{Работоспособность программы сложения по кольцевой схеме}
+    \label{img:grap6}
+\end{figure}
+\newpage
+Результат вычисления суммы ненулевых матриц одинакового размера, используя кольцевую схему приведен на рис. ~\ref{img:grap7}.
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm, height=14cm]{test_7.PNG}}
+    \caption{Работоспособность программы сложения по кольцевой схеме}
+    \label{img:grap7}
+\end{figure}
+\newpage
+Результат умножения ненулевых матриц разного размера, используя кольцевую схему приведен на рис. ~\ref{img:grap8}.
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm, height=14cm]{test_7.PNG}}
+    \caption{Работоспособность программы умножения по кольцевой схеме}
+    \label{img:grap8}
+\end{figure}
+\newpage
+Результат умножения нулевых матриц разного размера, используя кольцевую схему приведен на рис. ~\ref{img:grap9}.
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm, height=14cm]{test_9.PNG}}
+    \caption{Работоспособность программы умножения по кольцевой схеме}
+    \label{img:grap9}
+\end{figure}
+\newpage
+Результат умножения ненулевых матриц разного размера, используя кольцевую схему приведен на рис. ~\ref{img:grap10}.
+\begin{figure}[h!]
+    \center{\includegraphics[width=18cm, height=14cm]{test_10.PNG}}
+    \caption{Работоспособность программы умножения по кольцевой схеме}
+    \label{img:grap10}
+\end{figure}
+\newpage
+Оценим эффективность сжатого хранения матриц. Рассмторим матрицу размера $n \times n$, где имеется $k~\%$ ненулевых элементов, учитывая, что все элементы целые. Для хранения матрицы без сжатия потребуется $4 \cdot n^2$ байт памяти. Однако для хранения матриц, которые используются в схеме Дженнингса необходимо затратить $4\cdot n$ байт памяти для массива D. Предположим, что в каждой строке находится $m$ целых ненулевых элементов. Тогда на хранения массива AN необходимо затратить $4 \cdot m \cdot n$ байт памяти. В сумме матрицы AN и D занимают $4n\cdot(m + 1)$ байт памяти. Можно проследить зависимость необходимой памяти для хранения данных. При хранении всей матрицы имеем квадратичную зависимость, а при разреженном хранении --- линейную. Отсюда нетрудно сделать вывод, что при значениях $n$ стремящихся к бесконечности, выгоднее хранить разреженные матрицы. 
+
+Аналогичные размышления можно провести и с кольцевой схемой хранения. Пусть есть матрица $n \times n$ с $m$ ненулевыми элементами. В ней используется 5 массивов, для хранения данных: AN, NC, NR по $4\cdot m$ байт на массив. Также массивы JR и JC, которые занимают $4\cdot n$ байт памяти каждый. Тогда в сумме эти массивы занимают $12m + 8n$ байт памяти. Получаем, что при $n$ стремящемся к бесконечности выгоднее использовать кольцевую схему хранения разреженных матриц. 
+\newpage
+\begin{center}
+    \section*{Заключение}
+    \addcontentsline{toc}{section}{Заключение}
+\end{center}
+
+Цель работы достигнута:
+
+В результате выполнения лабораторной работы были выполнены все задачи.
+\begin{enumerate}
+\item Описаны две схемы сжатого хранения разреженных матриц --- Дженнингса и кольцевая схема.
+\item Разработаны алгоритмы сжатия, распаковки, сложения матриц для обеих схем и алгоритм умножения матриц для кольцевой схемы.
+\item Реализованы разработанные алгоритмы.
+\item Выполнено тестирование реализации разработанных алгоритмов.
+\item Оценена эффективность сжатого хранения матриц в обоих схемах для матрицы действительных чисел с 5~\% ненулевых элементов.
+\end{enumerate}
+
+Согласно варианту, разработаны следующие два алгоритма.
+\begin{enumerate}
+\item Алгоритм сжатого хранения и распоковки матриц по схеме Дженнингса. Сжатые матрицы  сложены и распакованы и результат был записан в файл.
+\item Алгоритм сжатого хранения и распаковки матриц по схеме Рейнбольдта-Местеньи. Матрицы были сложены и умножены, запакованы и записаны в файл.
+\end{enumerate}
+
+Анализ затрачиваемой на хранение матриц памяти показал, что при $5-10\%$ ненулевых элементов и при бесконечно больших размерах матрицы выгоднее использовать сжатое хранение, нежели хранить полную матрицу. 
+
+\newpage
+\begin{center}
+\begin{thebibliography}{}
+\addcontentsline{toc}{section}{Список используемых источников}
+\bibitem{book}Писсанецки, С. Технология разреженных матриц [Текст]: монография / С.Писсанецки.; пер. с анг. под ред. Х.Д.Икрамова. - М.: Мир, 1988. - 410 с.
+\end{thebibliography}
+\end{center}
+\end{document}
+

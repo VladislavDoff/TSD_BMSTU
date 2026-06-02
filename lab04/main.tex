@@ -1,0 +1,721 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage{indentfirst, setspace}
+\usepackage{tabularx, multirow}
+\usepackage[normalem]{ulem}
+\usepackage[style=russian]{csquotes}
+\usepackage[english,russian]{babel}
+\usepackage{hyperref}
+\usepackage{ragged2e}
+\usepackage{caption}
+\usepackage{wrapfig}
+\usepackage{amsmath}
+\usepackage{tikz}
+\makeatletter
+\def\@biblabel#1{#1. }
+\makeatother
+\captionsetup{labelsep=endash}
+\usepackage{listings}
+\linespread{1.3}
+\lstset{
+  language=C++, % Язык программирования (можно выбрать другой)
+  basicstyle=\ttfamily\small, % Основной стиль шрифта
+  keywordstyle=\color{blue}, % Стиль ключевых слов
+  breaklines=true,
+  commentstyle=\color{green}, % Стиль комментариев
+  stringstyle=\color{red}, % Стиль строк
+  extendedchars=\true,
+  showstringspaces=false,
+}
+\usepackage[left=20mm, top=15mm, right=15mm, bottom=20mm]{geometry}
+
+\begin{document}
+\begin{titlepage}
+     \fontsize{12}{12}\selectfont
+
+  {\centering
+
+   \begin{bf}
+
+    \begin{wrapfigure}{l}{19mm}
+        \includegraphics[width=22mm]{emblem.jpeg}
+    \end{wrapfigure}
+
+
+    \noindent Министерство науки и высшего образования Российской Федерации
+
+    \noindent Федеральное государственное бюджетное образовательное учреждение высшего образования
+
+    \noindent \enquote{Московский государственный технический унверситет
+
+     \noindent имени Н.Э. Баумана
+
+     \noindent (национальный исследовательский университет)}
+
+    \noindent (МГТУ им. Н.Э. Баумана)
+
+   \end{bf}
+  }
+
+  \vspace{0.4cm}
+
+  {\setstretch{0.1}
+   \noindent\rule{\textwidth}{1mm}
+   \noindent\rule{\textwidth}{0.5mm}
+
+  }
+
+  \fontsize{14}{21}\selectfont
+
+  \noindent\begin{tabularx}{\textwidth}{l >{\centering\arraybackslash}X}
+   ФАКУЛЬТЕТ & \flqq Фундаментальные Науки\frqq \\ \cline{2-2}
+
+   КАФЕДРА & ФН-12 \flqq Математическое моделирование\frqq \\ \cline{2-2}
+  \end{tabularx}
+
+
+  \vspace{1cm}
+
+
+  \begin{center}
+   \begin{bf}
+
+    \fontsize{24}{36}\selectfont
+    ОТЧЕТ
+
+    \fontsize{20}{30}\selectfont
+    ПО ЛАБОРАТОРНОЙ РАБОТЕ НА ТЕМУ:
+
+    Обратная польская запись
+
+   \end{bf}
+  \end{center}
+
+  \fontsize{14}{21}\selectfont
+  \vspace{5cm}
+
+
+  \noindent\begin{tabularx}{\textwidth}{ X >{\centering}p{4cm} p{1cm} c }
+   Студент: & & & Подобедов В. В. \\ \cline{2-2} \cline{4-4}
+   & \fontsize{10}{15}\selectfont дата, подпись & & \fontsize{10}{15}\selectfont Ф.И.О. \\
+   Преподаватель: & & & Волкова Л. Л.\\ \cline{2-2} \cline{4-4}
+   & \fontsize{10}{15}\selectfont дата, подпись & & \fontsize{10}{15}\selectfont Ф.И.О.
+  \end{tabularx}
+
+  \vspace{\fill}
+
+  \begin{center}
+   \it{Москва}, 2023
+  \end{center}
+
+  \thispagestyle{empty}
+\end{titlepage}
+
+\renewcommand{\contentsname}{Содержание}
+\setcounter{page}{2}
+\tableofcontents
+
+\newpage
+\begin{center}
+   \section*{Введение} 
+\addcontentsline{toc}{section}{Введение}
+\end{center}
+
+\justifying
+\textbf{Цель лабораторной работы}: разработать программу для вычисления значений функции с использованием обратной польской записи.
+
+Для достижения поставленной цели требуется решить следующие \textbf{задачи}.
+\begin{enumerate}
+\item Описать две формы записи --- инфиксную и постфиксную.
+\item Разработать алгоритм проверки введенной инфиксной записи.
+\item Реализовать алгоритм перевода из инфиксной записи в постфиксную форму записи.
+\item Составить таблицу значений функции, при заданных границах и шаге аргумента.
+\item Выполнить тестирование реализации разработанных алгоритмов.
+\end{enumerate}
+
+\newpage
+\begin{center}
+   \section{Аналитическая часть} 
+\end{center}
+
+\textbf{Инфиксная нотация} —-- это форма записи математических и логических формул, в которой операторы записаны в инфиксном стиле между операндами, на которые они воздействуют. Иначе говоря, обычные арифметические выражения, используемые в повседневной практике и содержащие скобки.
+
+\textbf{Постфиксная нотация} —-- форма записи математических и логических выражений, в которой операнды расположены перед знаками операций. Эта форма записи также называется Обратной польской записью. 
+
+\textbf{Стек}\cite{book} --- абстрактный тип данных, представляющий собой список элементов, организованных по принципу LIFO (англ. last in — first out, «последним пришёл — первым вышел»). Стек является очередью с одной стороной входа и выхода элементов. 
+
+\newpage
+\begin{center}
+    \section{Конструкторская часть}
+\end{center}
+\subsection{Проверка корректности инфиксной записи}
+Для проверки корректной записи скобок в выражении необходимо создать курсор и поэлементно обрабатывать данные, начиная с первого элемента до конечного. Если была найдена открывающая скобка ``('', то добавить единицу к целочисленной переменной. Иначе, если была найдена закрывающаяся скобка ``)'', нужно вычесть единицу из переменной, которая отвечает за проверку количества закрывающихся и открывающихся скобок. Если переменная после всего обхода строки осталась равной нулю, значит баланс скобок соблюдён, иначе вывести предупреждение, о том что баланс скобок не соблюдён. Если переменная отрицательное значение, необходимо вывести ошибку и прекрартить выполнение программы. 
+
+Для проверки корректности токенов, входящих в строку, необходимо также, как и с проверкой скобок запустить курсор, который будет идти по каждому элементу строки. Созданные функции будут проверять является ли элемент оператором, функцией, числом или переменной. Если все функции возвратили отрицательное значение, значит необходимо вывести ошибку, что строка содержит не допустимый токен. Также если нужно проверить, чтобы количество операторов было на единцу меньше, чем количество операндов. Иначе программа должна вывести ошибку. Если идут два оператора подряд ($+$, $-$, $*$, $/$), то вывести ошибку.
+
+\subsection{Перевод в польскую запись}
+Чтобы перевести выражение из инфиксной в постфиксную запись, необходимо создать курсор, который будет двигаться поэлементно от начала строки до конца. Также нужно реализовать стек, в который будут добавляться операторы. Если встретился элемент, который является числом или переменной, то добавить его в заранее созданную строку, которая будет хранить всю постфиксную запись и сместить курсор. Далее проверяется не встретилась ли открывающаяся скобка, если да, то добавить ее в стек и сдвинуть курсор. Если встретился символ --- оператор ($+$, $*$ и т.д.), проверить его приоритет относительно операторов в стеке. Если приоритет текущего оператора выше или равен приоритету оператора на вершине стека, поместить его в стек операторов. Если приоритет ниже, извлечь операторы из стека и добавить их в постфиксное выражение, пока не выполнится условие приоритета. Если встретился символ закрывающейся скобки, выполнить цикл извлечения операторов из стека и добавления их в постфиксное выражение до тех пор, пока не встретится открывающая скобка. После завершения обработки символов входной строки, извлечь все оставшиеся операторы из стека и добавить их в конец постфиксного выражения.
+
+\subsection{Вычисление значения функции в постфиксной записи}
+Для корректного вычисления значения функции, необходимо создать стек, который будет хранить операнды. Далее создается курсор, который будет идти по каждому элементу в постфиксной строке и обрабатывать символы. Если встрилась цифра, то она добавляется в стек и курсор смещается. Если попался символ --- арифметический оператор, то из стека извлекаются последние два операнда и выполняется арифметическая операция между этими элементами. Результат арифметической операции добавляется обратно в стек. Если встретилась функция, то из стека извлекается последний и находится синус или котангенс этого значения, результат помещается обратно в стек. После обработки всех символов входной постфиксной строки, извлекается последний элемент из стека, который и является результатом выражения. Если функция не определена в некоторой точке, то функция возращает бесконечное значение и, дальше программа обрабатывает его, ставя в таблицу прочерк.
+
+\subsection{Написание стека}
+С помощью шаблонных классов ``List'', который описывает саму структуру стека, и ``Node'', который описывает блок стека, реализовать стек на ссылках. Требуется разработать следующие методы.
+\begin{itemize}
+    \item[---] Метод ``push\_back'' --- метод, который добавляет элемент в конец стека.
+    \item[---] Метод ``pop\_back'' --- метод, который удаляет последний элемент из стека.
+    \item[---] Метод ``GetSize'' --- метод, который печатает количество элементов в стеке.
+    \item[---] Метод ``check'' --- метод, который проверяет стек на пустоту.
+    \item[---] Метод ``print'' --- метод, который выводит весь стек в консоль.
+    \item[---] Перегрузить оператор ``[ ]'' для вывода элемента стека на определённом месте.
+\end{itemize}
+
+\subsection{Функции программы}
+Требуется разработать следующие функции.
+\begin{itemize}
+    \item[---] Функция ``read\_file'' --- функция, которая считывает инфиксную строку из файла в переменную.
+    \item[---] Функция ``isNumber'' --- функция, которая проверяет является ли символ числом.
+    \item[---] Функция ``isOperator'' --- функция, которая проверяет является ли элемент оператором.
+    \item[---] Функция ``isFunction'' --- функция, которая проверяет является ли элемент функцией.
+    \item[---] Функция ``valid\_inf'' --- функция, которая проверяет является ли инфиксное выражение строкой.
+    \item[---] Функция ``precedence'' --- функция, которая проверяет приоритет оператора.
+    \item[---] Функция ``infixToPostfix'' --- функция, которая переводит строку из инфиксной записи в постфиксную.
+    \item[---] Функция ``evaluatePostfix'' --- функция, которая высчитывает значение выражения, используя постфиксную форму записи.
+\end{itemize}
+
+К программе предъявлены следующие требования. Строка, которая содержит инфиксную форму записи считывается из файла, проверяется на корректность её записи и переводится в постфиксную запись. Далее пользователь вводит границы отрезка и шаг аргумента, на котором он хотел бы узнать значения функции. Выводится таблица со значениями функции.
+\newpage
+\begin{center}
+    \section{Технологическая часть}
+\end{center}
+
+Лабораторная работа была реализована на языке программирования C++. Кроме стандартной библиотеки <iostream>, которая предоставляет возможность пользоваься средствами ввода-вывода для стандартной консоли, была подключена библиотека <fstream>. Она включает в себя набор классов, методов и функций, которые предоставляют интерфейс для чтения/записи данных из/в файл. Также была подключена библиотека <string> для пользования строками. Был также написан стек на ссылках.
+Далее приведен листинг реализации стека (листинг~\ref{lst:label1}).
+\begin{lstlisting}[caption={Исходный код программы для реализации стека},label={lst:label1}]
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <limits>
+#include <locale>
+
+using namespace std;
+
+const double PI = 3.141592653589793;
+
+template<typename T>
+class List {
+public:
+	List() {
+		size = 0;
+		head = nullptr;
+	}
+
+	~List() {}
+
+	void push_back(T date) {
+		if (head == nullptr) {
+			head = new Node<T>(date);
+		}
+		else {
+			Node<T> *current = this->head;
+			while (current->pNext != nullptr) {
+				current = current->pNext;
+			}
+			current->pNext = new Node<T>(date);
+		}
+		size++;
+	}
+
+	int GetSize() {
+		return size;
+	}
+
+	void pop_back() {
+		Node<T> *previous = this->head;
+		for (int i = 0; i < GetSize() - 2; i++) {
+			previous = previous->pNext;
+		}
+		if (size > 1) {
+			Node<T> *toDelete = previous->pNext;
+			previous->pNext = toDelete->pNext;
+			delete toDelete;
+			size--;
+		}
+		else {
+			Node<T> *toDelete = head;
+			head = nullptr;
+			delete toDelete;
+			size--;
+		}
+	}
+
+	void check() {
+		if (size == 0) {
+			cout << "Стек пустой" << endl;
+		}
+		else {
+			cout << "В стеке хранятся данные" << endl;
+		}
+	}
+
+	void print() {
+		Node<T> *current = this->head;
+		while (current != nullptr) {
+			cout << current->date;
+			current = current->pNext;
+		}
+	}
+
+	T& operator[](const int index)
+	{
+		int counter = 0;
+		Node<T> *current = this->head;
+		while (current != nullptr){
+			if (counter == index){
+				return current->date;
+			}
+			current = current->pNext;
+			counter++;
+		}
+	}
+
+
+private:
+
+	template<typename T>
+	class Node {
+	public:
+		Node * pNext;
+		T date;
+
+		Node(T date, Node * pNext = nullptr) {
+			this->date = date;
+			this->pNext = pNext;
+		}
+	};
+	Node<T> *head;
+	int size;
+};
+
+void read_file(string &inf) {
+	string filename = "C:\\Users\\Kononova\\Desktop\\lab_3_2_inf.txt";
+	ifstream file(filename);
+	if (!file.is_open()) {
+		cout << "Ошибка: Не удалось открыть файл." << endl;
+		exit;
+	}
+	while (getline(file, inf)) {
+		cout << "Прочитанная строка: " << inf << endl << endl;
+	}
+	file.close();
+}
+
+bool isNumber(const string& s) {
+	for (char c : s) {
+		if (!isdigit(c) && c != '.' && c != '-') {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool isOperator(string &c) {
+	return (c == "+" || c == "-" || c == "*" || c == "/" || c == "^" || c == "(" || c == ")");
+}
+
+bool isFunction(string& token) {
+	return (token == "sin" || token == "ctg");
+}
+
+bool valid_inf(string &inf) {
+	int brackets = 0;
+	for (int i = 0; i < inf.size(); i++) {
+		if (i == 0 && inf[i] == '-') {
+			inf.insert(0, "0 ");
+		}
+		if (i > 1 && inf[i] == '-' && inf[i - 2] == '(') {
+			inf.insert(i , "0 ");
+		}
+		if (i > 1 && (inf[i] == '-' || inf[i] == '+' || inf[i] == '*' || inf[i] == '/')
+			&& (inf[i - 2] == '-' || inf[i - 2] == '+' || inf[i - 2] == '*' || inf[i - 2] == '/')) {
+			cout << "Ошибка в валидности операторов" << endl << endl;
+			return 0;
+		}
+		if (i > 1 && inf[i] == '-' && (inf[i - 2] == '/' || inf[i - 2] == '*')) {
+			inf.insert(i + 4, ") ");
+			inf.insert(i, "( 0 ");		
+		}
+		if (inf[i] == '(') {
+			brackets++;
+		}
+		else if(inf[i] == ')'){
+			brackets--;
+			if (brackets < 0) {
+				cout << "Неправильно расставлены скобки" << endl << endl;
+				return false;
+			}
+		}
+	}
+	if (brackets != 0) {
+		cout << "Неправильно расставлены скобки" << endl << endl;
+		return false;
+	}
+	int operators = 0, operands = 0;
+	for (int i = 0; i < inf.size(); i++) {
+		string check;
+		while (i < inf.size() && inf[i] != ' ') {
+			check += inf[i];
+			i++;
+		}
+		if (isOperator(check)) {
+			operators++;
+			continue;
+		}
+		else if (isFunction(check)) {
+			operators++;
+			continue;
+		}
+		else if (isNumber(check)) {
+			operands++;
+			continue;
+		}
+		else if (check == "x") {
+			operands++;
+			continue;
+		}
+		else {
+			cout << "Ошибка в валидности токенов" << endl << endl;
+			return 0;
+		}		
+	}
+	if (operands - 1 != operators) {
+		cout << "Ошибка в валидности операторов" << endl << endl;
+		return 0;
+	}
+	return true;
+}
+
+int precedence(char op) {
+	if (op == 's' || op == 'c')
+		return 4;
+	else if (op == '^')
+		return 3;
+	else if (op == '*' || op == '/')
+		return 2;
+	else if (op == '+' || op == '-')
+		return 1;
+	else
+		return -1;
+}
+
+string infixToPostfix(const string& expression) {
+	List<char> operators;
+	string postfix;
+
+	for (char c : expression) {
+		if (c == ' ' || c == 'i' || c == 'n' || c == 't'  || c == 'g') {
+			continue;
+		}
+		if (c == '.') {
+			postfix += c;
+			continue;
+		}
+		if (c != 's' && c != 'c' && isalnum(c)) {
+			postfix += c;
+		}
+		else if (c == '(') {
+			operators.push_back(c);
+		}
+		else if (c == ')') {
+			while (operators.GetSize() > 0 && operators[operators.GetSize() - 1] != '(') {
+				postfix += ' ';
+				postfix += operators[operators.GetSize() - 1];
+				if (operators[operators.GetSize() - 1] == 's') {
+					postfix += "in";
+				}
+				if (operators[operators.GetSize() - 1] == 'c') {
+					postfix += "tg";
+				}
+				operators.pop_back();
+			}
+			if (operators.GetSize() > 0 && operators[operators.GetSize() - 1] == '(') {
+				operators.pop_back();
+			}
+		}
+		else {
+			while (operators.GetSize() > 0 && precedence(c) <= precedence(operators[operators.GetSize() - 1])) {
+				postfix += ' ';
+				postfix += operators[operators.GetSize() - 1];
+				if (operators[operators.GetSize() - 1] == 's') {
+					postfix += "in";
+				}
+				if (operators[operators.GetSize() - 1] == 'c') {
+					postfix += "tg";
+				}
+				operators.pop_back();
+			}
+			if (c != 's' && c != 'c') {
+				postfix += ' ';
+			}
+			operators.push_back(c);
+		}
+	}
+
+	while (operators.GetSize() > 0) {
+		postfix += ' ';
+		postfix += operators[operators.GetSize() - 1];
+		operators.pop_back();
+	}
+
+	return postfix;
+}
+
+double evaluatePostfix(const string& expression) {
+	setlocale(0, "");
+	List<double> operands;
+
+	for(int i = 0; i < expression.size(); i++){
+		if (expression[i] == ' ') {
+			continue; 
+		}
+		if (expression[i] == '-' && isdigit(expression[i + 1])) {
+			int num = expression[i + 1] - '0';
+			operands.push_back(-num);
+			i = i + 2;
+			continue;
+		}
+		if (isdigit(expression[i])) {
+			if (expression[i + 1] == '.') {
+				string numm;
+				while (expression[i] != ' ') {
+					numm += expression[i];
+					i++;
+				}
+				locale::global(std::locale("en_US.UTF-8"));
+				double num = std::stof(numm);
+				operands.push_back(num);
+				continue;
+			}
+			operands.push_back(expression[i] - '0');
+		}
+		else if (expression[i] == '+' || expression[i] == '-' || expression[i] == '*' || expression[i] == '/' || expression[i] == '^') {
+			double operand2 = operands[operands.GetSize() - 1];
+			operands.pop_back();
+			double operand1 = operands[operands.GetSize() - 1];
+			operands.pop_back();
+			double result = 0.0;
+
+			switch (expression[i]) {
+			case '+':
+				result = operand1 + operand2;
+				break;
+			case '-':
+				result = operand1 - operand2;
+				break;
+			case '*':
+				result = operand1 * operand2;
+				break;
+			case '/':
+				if (operand2 == 0) {
+					return std::numeric_limits<float>::infinity();
+				}
+				result = operand1 / operand2;
+				break;
+			case '^':
+				if (operand1 < 0 && (operand2 < 1 && operand2 > 0)) {
+					cout << "Square root of a negative number" << endl;
+					return std::numeric_limits<float>::infinity();
+					break;
+				}
+				result = pow(operand1, operand2);
+				break;
+			}
+
+			operands.push_back(result);
+		}
+		else if (expression[i] == 's') {
+			double operand = operands[operands.GetSize() - 1];
+			operands.pop_back();
+			operands.push_back(sin(operand));
+		}
+		else if (expression[i] == 'c') {
+			double operand = operands[operands.GetSize() - 1];
+			operands.pop_back();
+			if (PI / 2 == operand) {
+				return std::numeric_limits<float>::infinity();
+				break;
+			}
+			if (operand == 0) {
+				return std::numeric_limits<float>::infinity();
+				break;
+			}
+			operands.push_back(1.0 / tan(operand));
+		}
+	}
+	return operands[operands.GetSize() - 1];
+}
+
+int main() {
+	setlocale(0, "");
+	string infix = "";
+	read_file(infix);
+	if (infix == "") {
+		cout << "Пустая строка";
+		return 0;
+	}
+	if (!valid_inf(infix)) {
+		return 0;
+	}
+	cout << "Введённая строка с проверкой: " << infix << endl;
+	
+	string postfixExpression = infixToPostfix(infix);
+	cout << "Постфиксная запись: " << postfixExpression << endl << endl;
+
+	int xmin, xmax, h;
+	cout << "Введите xmin: ";
+	cin >> xmin;
+	cout << "Введите xmax: ";
+	cin >> xmax;
+	cout << "Введите h: ";
+	cin >> h;
+	cout << endl;
+	
+	for (int i = xmin; i <= xmax; i = i + h) {
+		string dubler = postfixExpression;
+		for (int j = 0; j < postfixExpression.size(); j++) {
+			if (postfixExpression[j] == 'x') {
+				dubler.replace(j, 1, to_string(i));
+			}
+		}
+		if (evaluatePostfix(dubler) == std::numeric_limits<float>::infinity()) {
+			cout << "x = " << i << "   f(x) = " << "---" << endl;
+		}
+		else {
+			cout << "x = " << i << "   f(x) = " << evaluatePostfix(dubler) << endl;
+		}
+		if (i + h > xmax && i < xmax) {
+			for (int j = 0; j < postfixExpression.size(); j++) {
+				if (postfixExpression[j] == 'x') {
+					dubler.replace(j, 1, to_string(xmax));
+				}
+			}
+			if (evaluatePostfix(dubler) == std::numeric_limits<float>::infinity()) {
+				cout << "x = " << xmax << "   f(x) = " << "---" << endl;
+			}
+			else {
+				cout << "x = " << xmax << "   f(x) = " << evaluatePostfix(dubler) << endl;
+			}
+		}
+	}
+
+	return 0;
+}
+\end{lstlisting}
+
+В программе данные считываются из файла, считанная строка проверяется на корректность написания. Далее, если данные записаны правильно, то строка из инфиксной записи переводится в постфксную. После того, как пользователь ввел границы аргумента и его шаг, программа создает таблицу с вычисленными значениями.
+
+\newpage
+\begin{center}
+    \section{Исследовательская часть}
+\end{center}
+
+Далее на рисунках представлен результат работы программы и входной файл с инфиксным выражением.
+
+Результат работы программы, где во входном файле записана строка в инфиксной записи, она считывается и проверяется на валидность. Далее переводится в постфиксную запись и при введенных данных строится таблица. Результат приведён на рис.~\ref{img:grap1}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test_1.PNG}}
+    \caption{Пример №1}
+    \label{img:grap1}
+\end{figure}
+
+\newpage
+Результат работы программы, где во входном файле записана строка в инфиксной записи, она считывается и проверяется на валидность. Далее переводится в постфиксную запись и при введенных данных строится таблица. Результат приведён на рис.~\ref{img:grap2}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test_2.PNG}}
+    \caption{Пример №2}
+    \label{img:grap2}
+\end{figure}
+
+\newpage
+Результат работы программы, где во входном файле записана строка в инфиксной записи, она считывается и проверяется на валидность. Далее переводится в постфиксную запись и при введенных данных строится таблица. Результат приведён на рис.~\ref{img:grap3}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test_3.PNG}}
+    \caption{Пример №3}
+    \label{img:grap3}
+\end{figure}
+
+\newpage
+Результат работы программы при неверном количестве скобок приведён на рис.~\ref{img:grap4}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test_4.PNG}}
+    \caption{Пример №4}
+    \label{img:grap4}
+\end{figure}
+
+\newpage
+Результат работы программы при неверно введённых значениях выражения приведён на рис.~\ref{img:grap5}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test_5.PNG}}
+    \caption{Пример №5}
+    \label{img:grap5}
+\end{figure}
+
+\newpage
+Результат работы программы при неверно введённых значениях выражения приведён на рис.~\ref{img:grap6}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test_6.PNG}}
+    \caption{Пример №6}
+    \label{img:grap6}
+\end{figure}
+
+\newpage
+Результат работы программы при извлечении отрицательного числа из-под корня приведён на рис.~\ref{img:grap7}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test_7.PNG}}
+    \caption{Пример №7}
+    \label{img:grap7}
+\end{figure}
+
+\newpage
+Результат работы программы при вычислении таблицы для котангенса приведён на рис.~\ref{img:grap8}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test_8.PNG}}
+    \caption{Пример №8}
+    \label{img:grap8}
+\end{figure}
+
+\newpage
+Результат работы программы при неправильно введенных операторах приведён на рис.~\ref{img:grap9}. 
+\begin{figure}[h!]
+    \center{\includegraphics{test9.PNG}}
+    \caption{Пример №9}
+    \label{img:grap9}
+\end{figure}
+
+\newpage
+\begin{center}
+    \section*{Заключение}
+    \addcontentsline{toc}{section}{Заключение}
+\end{center}
+
+Цель работы достигнута: разработана программа для вычисления значений функции с использованием обратной польской записи.
+
+В результате выполнения лабораторной работы были выполнены все задачи.
+\begin{enumerate}
+\item Описаны две формы записи --- инфиксная и постфиксная.
+\item Разработан алгоритм проверки введенной инфиксной записи.
+\item Реализован алгоритм перевода из инфиксной записи в постфиксную форму записи.
+\item Составлена таблица значений функции, при заданных границах и шаге аругмента.
+\item Выполнено тестирование реализации разработанных алгоритмов.
+\end{enumerate}
+
+\newpage
+\begin{center}
+\begin{thebibliography}{}
+\addcontentsline{toc}{section}{Список используемых источников}
+\bibitem{book} Е.А. Конова , Г.А. Поллак, А.М. Ткачев. Структуры данных. Программирование на языке С и С++. Учебное пособие, под ред. Поллак Г.А. --- Челябинск: Издательство ЮУрГУ, 2004. --- 106 с.
+\end{thebibliography}
+\end{center}
+
+\end{document}

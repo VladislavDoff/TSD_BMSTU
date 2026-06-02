@@ -1,0 +1,592 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage{indentfirst, setspace}
+\usepackage{tabularx, multirow}
+\usepackage[normalem]{ulem}
+\usepackage[style=russian]{csquotes}
+\usepackage[english,russian]{babel}
+\usepackage{hyperref}
+\usepackage{ragged2e}
+\usepackage{caption}
+\usepackage{wrapfig}
+\usepackage{amsmath}
+\usepackage{tikz}
+\makeatletter
+\def\@biblabel#1{#1. }
+\makeatother
+\captionsetup{labelsep=endash}
+\usepackage{listings}
+\linespread{1.3}
+\lstset{
+  language=C++, % Язык программирования (можно выбрать другой)
+  basicstyle=\ttfamily\small, % Основной стиль шрифта
+  keywordstyle=\color{blue}, % Стиль ключевых слов
+  breaklines=true,
+  commentstyle=\color{green}, % Стиль комментариев
+  stringstyle=\color{red}, % Стиль строк
+  extendedchars=\true,
+  showstringspaces=false,
+}
+\usepackage[left=20mm, top=15mm, right=15mm, bottom=20mm]{geometry}
+
+\begin{document}
+\begin{titlepage}
+     \fontsize{12}{12}\selectfont
+
+  {\centering
+
+   \begin{bf}
+
+    \begin{wrapfigure}{l}{19mm}
+        \includegraphics[width=22mm]{emblem.jpeg}
+    \end{wrapfigure}
+
+
+    \noindent Министерство науки и высшего образования Российской Федерации
+
+    \noindent Федеральное государственное бюджетное образовательное учреждение высшего образования
+
+    \noindent \enquote{Московский государственный технический унверситет
+
+     \noindent имени Н.Э. Баумана
+
+     \noindent (национальный исследовательский университет)}
+
+    \noindent (МГТУ им. Н.Э. Баумана)
+
+   \end{bf}
+  }
+
+  \vspace{0.4cm}
+
+  {\setstretch{0.1}
+   \noindent\rule{\textwidth}{1mm}
+   \noindent\rule{\textwidth}{0.5mm}
+
+  }
+
+  \fontsize{14}{21}\selectfont
+
+  \noindent\begin{tabularx}{\textwidth}{l >{\centering\arraybackslash}X}
+   ФАКУЛЬТЕТ & \flqq Фундаментальные Науки\frqq \\ \cline{2-2}
+
+   КАФЕДРА & ФН-12 \flqq Математическое моделирование\frqq \\ \cline{2-2}
+  \end{tabularx}
+
+
+  \vspace{1cm}
+
+
+  \begin{center}
+   \begin{bf}
+
+    \fontsize{24}{36}\selectfont
+    ОТЧЕТ
+
+    \fontsize{20}{30}\selectfont
+    ПО ЛАБОРАТОРНОЙ РАБОТЕ НА ТЕМУ:
+
+    Задача коммивояжера
+
+   \end{bf}
+  \end{center}
+
+  \fontsize{14}{21}\selectfont
+  \vspace{5cm}
+
+
+  \noindent\begin{tabularx}{\textwidth}{ X >{\centering}p{4cm} p{1cm} c }
+   Студент: & & & Подобедов В. В. \\ \cline{2-2} \cline{4-4}
+   & \fontsize{10}{15}\selectfont дата, подпись & & \fontsize{10}{15}\selectfont Ф.И.О. \\
+   Преподаватель: & & & Волкова Л. Л.\\ \cline{2-2} \cline{4-4}
+   & \fontsize{10}{15}\selectfont дата, подпись & & \fontsize{10}{15}\selectfont Ф.И.О.
+  \end{tabularx}
+
+  \vspace{\fill}
+
+  \begin{center}
+   \it{Москва}, 2023
+  \end{center}
+
+  \thispagestyle{empty}
+\end{titlepage}
+
+\renewcommand{\contentsname}{Содержание}
+\setcounter{page}{2}
+\tableofcontents
+
+\newpage
+\begin{center}
+   \section*{Введение} 
+\addcontentsline{toc}{section}{Введение}
+\end{center}
+
+\textbf{Цель лабораторной работы}: разработать алгоритм для решения задачи коммивояжера.
+
+Для достижения поставленной цели требуется решить следующие \textbf{задачи}.
+\begin{enumerate}
+\item Описать задачу коммивояжера, метод полного перебора и муравьиный алгоритм. 
+\item Реализовать метод полного перебора.
+\item Реализовать муравьиный алгоритм.
+\item Провести параметризацию для муравьиного алгоритма.
+\item Оценить эффективность нахождения оптимального пути разными алгоримтами.
+\item Выполнить тестирование реализации разработанных алгоритмов.
+\end{enumerate}
+
+\newpage
+\begin{center}
+   \section{Аналитическая часть} 
+\end{center}
+
+\textbf{Задача коммивояжера}~\cite{book} --- это классическая задача комбинаторной оптимизации, в которой коммивояжер должен посетить каждый из n городов ровно один раз, начиная и заканчивая свой маршрут в одном и том же городе, чтобы минимизировать общую стоимость (или длину) пути. Основная формулировка задачи: у нас есть заданный набор городов и расстояния между каждой парой городов. Коммивояжер должен найти кратчайший путь, который посетит каждый город ровно один раз и вернется в исходный город.
+
+\textbf{Метод полного перебора в задаче коммивояжера} --- наиболее простой и точный способ нахождения оптимального решения задачи. Он заключается в переборе всех возможных комбинаций порядка посещения городов и выборе того, который обеспечивает минимальную общую длину пути.
+
+
+\textbf{Муравьиный алгоритм} --- это алгоритм, вдохновленный поведением муравьев при поиске кратчайшего пути к источнику пищи. В контексте задачи коммивояжера муравьиный алгоритм используется для нахождения оптимального пути.
+
+Основная идея заключается в следующем:
+\begin{enumerate}
+    \item Феромоны: Муравьи откладывают феромоны на ребрах маршрута. Количество феромона на ребре обратно пропорционально длине пути - чем короче путь, тем больше феромона откладывается.
+    \item Поиск пути: Муравьи выбирают следующий город с учетом количества феромона на ребрах и "привлекательности" города.
+    \item Обновление феромонов: После завершения пути муравьи обновляют количество феромона на ребрах в зависимости от длины пройденного ими пути. Краткие и более оптимальные маршруты получают больше феромона.
+\end{enumerate}
+
+\newpage
+\begin{center}
+    \section{Конструкторская часть}
+\end{center}
+
+\subsection{Алгоритм полного перебора}
+\begin{enumerate}
+    \item Инициализация начального порядка посещения городов.
+    \begin{itemize}
+        \item[---] Создать вектор размером $n$, где $n$ --- количество городов, который содержит последовательность чисел от $1$ до $n$. Каждое число представляет собой порядковый номер города.
+    \end{itemize}
+    \item Перебор всех возможных комбинаций порядка посещения городов.
+    \begin{itemize}
+        \item[---] Переставлять элементы вектора так, чтобы они образовывали следующую перестановку, пока все возможные перестановки не будут исчерпаны.
+        \item[---] Для каждой перестановки выполнять вычисление длины текущего маршрута. 
+    \end{itemize}
+    \item Поиск минимальной длины маршрута.
+    \begin{itemize}
+        \item[---] Если текущий маршрут короче предыдущего минимального маршрута, обновить значение минимальной длины маршрута и сохранить порядок посещения городов в векторе.
+    \end{itemize}
+    \item Вывод результата.
+    \begin{itemize}
+        \item[---] Если найден допустимый маршрут, вывести длину найденного минимального пути и порядок посещения городов, обеспечивающий этот минимальный путь.
+        \item[---] Если допустимый маршрут не был найден, вывести сообщение о том, что возможного маршрута нет. 
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Функции, реализованные для полного перебора}
+\begin{enumerate}
+    \item Функция ``findOptimalPath'' --- функция, которая ищет путь, на который нужно потратить меньше всего времени и выводит его. Входные данные в функцию: $n$ --- количество городов и матрица ``graph'', которая содержит затраты по времени на перемещение из одного пункта в другой.
+    \item Функция ``calculatePathLength'' --- функция, которая считает затраты времени на обход всех городов. Входные данные в функцию: вектор ``path'', представляющий порядок посещения городов и матрица смежности ``graph'' --- двумерный вектор, представляющий веса ребер между городами. 
+\end{enumerate}
+
+\subsection{Муравьиный алгоритм}
+\begin{enumerate}
+    \item Инициализация феромонов.
+    \begin{itemize}
+        \item[---] Начальные значения феромонов устанавливаются на рёбрах графа. Чем выше количество феромонов, тем более привлекательным считается путь.
+    \end{itemize}
+    \item Проход муравьёв.
+    \begin{itemize}
+        \item[---] Муравьи перемещаются по графу, строя маршруты от начальной точки до конечной. Они выбирают следующий город, опираясь на феромоны и информацию о расстояниях между городами.
+    \end{itemize}
+    \item Обновление феромонов.
+    \begin{itemize}
+        \item[---] После прохода всех муравьёв, феромоны обновляются на основе пройденных маршрутов. Чем короче маршрут, тем больше феромона откладывается на его рёбрах.
+    \end{itemize}
+    \item Испарение феромонов.
+    \begin{itemize}
+        \item[---] Чтобы избежать слишком сильного привлечения к одному пути, феромоны испаряются со временем. Это позволяет алгоритму исследовать разные пути.
+    \end{itemize}
+    \item Повторение процесса.
+     \begin{itemize}
+        \item[---] Шаги с $2$ по $4$ повторяются многократно (заданное количество итераций или до достижения условия останова).
+    \end{itemize}
+    \item Выбор лучшего маршрута
+     \begin{itemize}
+        \item[---] После завершения всех итераций выбирается лучший найденный маршрут, основываясь на количестве феромона и длине пути.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Функции, реализованные в муравьинном алгоритме}
+\begin{enumerate}
+    \item Функция ``initializePheromones'' --- функция, которая заполняет матрицу ``pheromones'' начальными значениями феромонов. Это начальное количество феромонов на всех рёбрах между городами. Входные данные в функцию: ``pheromones'' --- ссылка на двумерный вектор, представляющий матрицу феромонов между городами, $n$ --- количество городов.
+    \item Функция ``updatePheromones'' --- функция, которая уменьшает количество феромонов на всех рёбрах, что соответствует их испарению. Обновляет феромоны на рёбрах, пройденных муравьями, путём добавления значения к текущим значениям феромонов на этих рёбрах. Входные данные в функцию: ``pheromones'' --- ссылка на двумерный вектор, представляющий матрицу феромонов между городами и ``antsPaths'' --- матрица, содержащий маршруты, пройденные муравьями.
+    \item Функция ``selectNextCity'' --- функция,в которой методика выбора следующего города основана на вероятностях. Из вероятностей выбирается случайное число и находится город, вероятность выбора которого превышает это число. Параметры функции: ``currCity'' --- текущий город, из которого муравей делает выбор. ``graph'' --- матрица смежности городов. ``probabilities'' --- вектор вероятностей следующих городов для посещения.
+    \item Функция ``antColonyOptimization''. В этой функции реализован основной процесс муравьиной оптимизации.
+    \begin{itemize}
+        \item[---] Инициализируются феромоны на рёбрах.
+        \item[---]  Несколько муравьёв создают и проходят свои маршруты.
+        \item[---]  Феромоны обновляются на основе пройденных маршрутов.
+        \item[---]  Лучший найденный маршрут сохраняется и возвращается в качестве результата.
+    \end{itemize}
+    Параметры функции: $n$ --- количество городов. ``graph'' --- матрица смежности городов. ``maxDays'' --- максимальное количество итераций алгоритма.
+
+\end{enumerate}
+
+\newpage
+\begin{center}
+    \section{Технологическая часть}
+\end{center}
+
+Лабораторная работа была реализована на языке программирования C++. Кроме стандартной библиотеки <iostream>, которая предоставляет возможность пользоваься средствами ввода-вывода для стандартной консоли, была подключена библиотека <vector> --- это контейнер в стандартной библиотеке C++, который представляет собой динамический массив, способный изменять свой размер динамически во время выполнения программы. Также была подключена библиотка <algorithm>, предоставляющая множество шаблонных функций для работы с контейнерами, итераторами и другими структурами данных. Библиотека <random> предоставляет средства для генерации случайных чисел и различных распределений вероятности. Библиотека <time.h> в C++ содержит набор функций и типов данных для работы со временем и датой. 
+
+Далее приведен листинг реализации стека (листинг~\ref{lst:label1}).
+\begin{lstlisting}[caption={Исходный код программы для реализации задачи коммивояжера},label={lst:label1}]
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <random>
+#include <time.h>
+using namespace std;
+
+const int INF = 1e9;
+const double ALPHA = 1.0;
+const double BETA = 2.0;
+const double EVAPORATION = 0.5; 
+const double Q = 100.0;
+const int ANTS = 10;
+const int ITERATIONS = 200; 
+
+// Функция для вычисления общей длины маршрута
+int calculatePathLength(const vector<int>& path, const vector<vector<int>>& graph) {
+	int pathLength = 0;
+	int n = path.size();
+	for (int i = 0; i < n - 1; ++i) {
+		if (graph[path[i]][path[i + 1]] == 0) { // Проверка наличия ребра между городами
+			return INF;
+		}
+		pathLength += graph[path[i]][path[i + 1]];
+	}
+	if (graph[path[n - 1]][path[0]] != 0) { // Проверка наличия ребра между последним и первым городами
+		pathLength += graph[path[n - 1]][path[0]];
+		return pathLength;
+	}
+	return INF;
+}
+
+// Функция для поиска минимального пути методом полного перебора
+void findOptimalPath(int n, vector<vector<int>>& graph) {
+	vector<int> vertex(n);
+	for (int i = 0; i < n; ++i) {
+		vertex[i] = i;
+	}
+
+	int minPath = INF;
+	vector<int> bestPath;
+
+	do {
+		int currentPath = calculatePathLength(vertex, graph);
+		if (currentPath < minPath) {
+			minPath = currentPath;
+			bestPath = vertex;
+		}
+	} while (next_permutation(vertex.begin() + 1, vertex.end()));
+
+	if (minPath == INF) {
+		cout << "Нет возможного маршрута" << endl;
+	}
+	else {
+		cout << "Минимальный путь: " << minPath << endl;
+		cout << "Лучший маршрут через полный перебор: ";
+		for (int i = 0; i < n; ++i) {
+			cout << bestPath[i] << " ";
+		}
+		cout << bestPath[0] << endl;
+	}
+}
+
+// Функция для инициализации феромонов на ребрах
+void initializePheromones(vector<vector<double>>& pheromones, int n) {
+	pheromones.assign(n, vector<double>(n, 1.0)); // Начальное количество феромона
+}
+
+// Функция для обновления феромонов на ребрах
+void updatePheromones(vector<vector<double>>& pheromones, const vector<vector<int>>& antsPaths) {
+	int n = pheromones.size();
+	// Испарение феромона на всех ребрах
+	for (int i = 0; i < n; ++i) {
+		for (int j = 0; j < n; ++j) {
+			pheromones[i][j] *= (1.0 - EVAPORATION);
+		}
+	}
+	// Обновление феромона по маршрутам муравьев
+	for (const auto& path : antsPaths) {
+		int pathLength = calculatePathLength(path, antsPaths);
+		for (int i = 0; i < n - 1; ++i) {
+			pheromones[path[i]][path[i + 1]] += Q / pathLength;
+		}
+		pheromones[path[n - 1]][path[0]] += Q / pathLength;
+	}
+}
+
+// Функция для выбора следующего города муравья
+int selectNextCity(int currCity, const vector<vector<int>>& graph, const vector<double>& probabilities) {
+	double sum = 0.0;
+	for (size_t i = 0; i < graph.size(); ++i) {
+		if (i != currCity && graph[currCity][i] != 0) {
+			sum += probabilities[i];
+		}
+	}
+
+	double randVal = static_cast<double>(rand()) / RAND_MAX;
+	double cumulativeProb = 0.0;
+	for (size_t i = 0; i < graph.size(); ++i) {
+		if (i != currCity && graph[currCity][i] != 0) {
+			cumulativeProb += probabilities[i] / sum;
+			if (randVal <= cumulativeProb) {
+				return i;
+			}
+		}
+	}
+	return -1;
+}
+
+// Функция для поиска маршрута муравьиной колонии
+vector<int> antColonyOptimization(int n, vector<vector<int>>& graph, int maxDays) {
+	vector<vector<double>> pheromones(n, vector<double>(n));
+	initializePheromones(pheromones, n);
+
+	vector<int> bestPath;
+	int bestPathLength = INF;
+	int days = 0;
+
+	for (int iter = 0; iter < ITERATIONS && days < maxDays; ++iter) {
+		vector<vector<int>> antsPaths(ANTS, vector<int>(n));
+		for (int ant = 0; ant < ANTS; ++ant) {
+			vector<int> visited(n, 0);
+			vector<int> path(n);
+			path[0] = rand() % n;
+			visited[path[0]] = 1;
+
+			for (int step = 1; step < n; ++step) {
+				int currentCity = path[step - 1];
+				vector<double> probabilities(n, 0.0);
+				double probabilitiesSum = 0.0;
+
+				for (int i = 0; i < n; ++i) {
+					if (i != currentCity && visited[i] == 0 && graph[currentCity][i] != 0) {
+						probabilities[i] = pow(pheromones[currentCity][i], ALPHA) * pow(1.0 / graph[currentCity][i], BETA);
+						probabilitiesSum += probabilities[i];
+					}
+				}
+
+				if (probabilitiesSum > 0.0) {
+					for (int i = 0; i < n; ++i) {
+						probabilities[i] /= probabilitiesSum;
+					}
+					int nextCity = selectNextCity(currentCity, graph, probabilities);
+					path[step] = nextCity;
+					visited[nextCity] = 1;
+				}
+			}
+			antsPaths[ant] = path;
+		}
+
+		updatePheromones(pheromones, antsPaths);
+
+		for (const auto& path : antsPaths) {
+			int pathLength = calculatePathLength(path, graph);
+			if (pathLength < bestPathLength) {
+				bestPathLength = pathLength;
+				bestPath = path;
+			}
+		}
+
+		for (const auto& path : antsPaths) {
+			int pathLength = calculatePathLength(path, graph);
+			if (pathLength < bestPathLength) {
+				bestPathLength = pathLength;
+				bestPath = path;
+			}
+		}
+
+		days++;
+	}
+	return bestPath;
+}
+
+int main() {
+	setlocale(0, "");
+	int n;
+	cout << "Введите количество городов: ";
+	cin >> n;
+
+	vector<vector<int>> graph = {
+		{0, 10, 15, 20},
+		{10, 0, 35, 25},
+		{15, 35, 0, 30},
+		{20, 25, 30, 0}
+	};
+	int maxDays;
+	cout << "Введите максимальное количество суток на поиск муравьиным алгоритмом: ";
+	cin >> maxDays;
+
+	findOptimalPath(n, graph);
+	cout << endl;
+
+	srand(static_cast<unsigned int>(time(0)));
+	vector<int> result = antColonyOptimization(n, graph, maxDays);
+
+	cout << "Лучший маршрут через муравьиный алгоритм: ";
+	for (int i = 0; i < n; ++i) {
+		cout << result[i] << " ";
+	}
+	cout << result[0] << endl;
+
+	return 0;
+}
+
+
+\end{lstlisting}
+
+\newpage
+\begin{center}
+    \section{Исследовательская часть}
+\end{center}
+
+Далее на рисунках представлен результат работы программы.
+
+Результат работы программы, где пользователь вводит максимальное количество суток на поиск муравьями пути. Программа выводит затраченное время на прохождение всех узлов и самый короткий путь. Результат приведён на рис.~\ref{img:grap1}, матрица смежности~(\ref{eq:matrix})
+
+\begin{center}
+\begin{equation}\label{eq:matrix}
+\left(
+\begin{array}{cccc}
+0 & 10 & 15 & 20 \\
+10 & 0 & 35 & 25 \\
+15 & 35 & 0 & 30 \\
+20 & 25 & 30 & 0 \\
+\end{array}
+\right)
+\end{equation}
+\end{center}
+
+\begin{figure}[h!]
+    \center{\includegraphics{test1.PNG}}
+    \caption{Пример №1}
+    \label{img:grap1}
+\end{figure}
+
+\begin{figure}[h!]
+    \center{\includegraphics[height=12cm]{graph1.PNG}}
+    \caption{Пример графа для теста №1}
+\end{figure}
+
+\newpage
+Результат работы программы, где пользователь вводит максимальное количество суток на поиск муравьями пути. Программа выводит затраченное время на прохождение всех узлов и самый короткий путь. Результат приведён на рис.~\ref{img:grap2}, матрица смежности~(\ref{eq:matrix2})
+
+\begin{center}
+\begin{equation}\label{eq:matrix2}
+\left(
+\begin{array}{cccccc}
+0 & 47 & 12 & 31 & 7 & 35 \\
+6 & 0 & 26 & 27 & 43 & 40 \\
+2 & 49 & 0 & 22 & 35 & 38 \\
+35 & 25 & 50 & 0 & 19 & 29 \\
+19 & 14 & 45 & 13 & 0 & 26 \\
+25 & 49 & 9 & 18 & 20 & 0 \\
+\end{array}
+\right)
+\end{equation}
+\end{center}
+
+\begin{figure}[h!]
+    \center{\includegraphics{test2.PNG}}
+    \caption{Пример №2}
+    \label{img:grap2}
+\end{figure}
+
+\begin{figure}[h!]
+    \center{\includegraphics[height=12cm]{graph2.PNG}}
+    \caption{Пример графа для теста №2}
+\end{figure}
+
+\newpage
+Результат работы программы, где пользователь вводит максимальное количество суток на поиск муравьями пути. Программа выводит затраченное время на прохождение всех узлов и самый короткий путь. Результат приведён на рис.~\ref{img:grap3}, матрица смежности~(\ref{eq:matrix3})
+\begin{center}
+\begin{equation}\label{eq:matrix3}
+\left(
+\begin{array}{cccccccc}
+0 & 0 & 9 & 0 & 27 & 0 & 5 & 20 \\
+17 & 0 & 6 & 0 & 0 & 2 & 0 & 0 \\
+0 & 14 & 0 & 3 & 0 & 7 & 0 & 8 \\
+0 & 0 & 0 & 0 & 13 & 0 & 0 & 32 \\
+33 & 0 & 35 & 0 & 0 & 38 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 47 & 0 \\
+0 & 50 & 0 & 52 & 53 & 0 & 0 & 56 \\
+57 & 0 & 0 & 0 & 61 & 0 & 63 & 0 \\
+\end{array}
+\right)
+\end{equation}
+\end{center}
+
+\begin{figure}[h!]
+    \center{\includegraphics{test3.PNG}}
+    \caption{Пример №3}
+    \label{img:grap3}
+\end{figure}
+
+\begin{figure}[h!]
+    \center{\includegraphics[height=11.5cm, width=13cm]{graph3.PNG}}
+    \caption{Пример графа для теста №3}
+\end{figure}
+
+\newpage
+\textbf{Плюсы переборного метода:}
+\begin{enumerate}
+    \item Гарантированное оптимальное решение. Переборный метод обеспечивает нахождение точного оптимального решения, если применен для решения задачи коммивояжера.
+\end{enumerate}
+
+\textbf{Минусы переборного метода:}
+\begin{enumerate}
+    \item Вычислительная сложность. Время выполнения перебора растет экспоненциально с увеличением количества городов $(O(n!))$. Для больших $n$ количество проверок становится огромным, что делает метод неэффективным и неприменимым на практике.
+\end{enumerate}
+
+\textbf{Плюсы муравьиного алгоритма:}
+\begin{enumerate}
+    \item Адаптивность к изменениям. Муравьиный алгоритм способен находить приемлемые решения в динамически изменяющихся условиях благодаря своей адаптивной природе.
+    \item Параллельность и распределенность. Параллеллен и применяется для распределенных систем, что делает его эффективным для решения задач на больших данных.
+    \item Низкая память и вычислительная сложность. Муравьиный алгоритм обладает невысокими требованиями к памяти и умеренной вычислительной сложностью, что позволяет применять его для решения сложных задач.
+\end{enumerate}
+
+\textbf{Минусы муравьиного алгоритма:}
+\begin{enumerate}
+    \item Склонность к локальным минимумам. Иногда может застрять в локальных оптимумах, не находя глобально оптимального решения.
+    \item Чувствительность к параметрам. Работоспособность алгоритма сильно зависит от настройки параметров, таких как коэффициенты испарения феромонов, параметры муравьиной информации и т. д.
+    \item Неприменимость для точного решения. Несмотря на глобальную оптимизацию, муравьиный алгоритм не гарантирует нахождения точного глобального оптимума.
+\end{enumerate}
+
+\newpage
+\begin{center}
+    \section*{Заключение}
+    \addcontentsline{toc}{section}{Заключение}
+\end{center}
+
+Цель лабораторной работы достигнута: разработан алгоритм для решения задачи коммивояжера.
+
+В результате выполнения лабораторной работы были выполнены все задачи.
+\begin{enumerate}
+\item Описана задача коммивояжера, метод полного перебора и муравьиный алгоритм. 
+\item Реализован метод полного перебора.
+\item Реализован муравьиный алгоритм.
+\item Проведена параметризация для муравьиного алгоритма.
+\item Оценена эффективность нахождения оптимального пути разными алгоримтами.
+\item Выполнено тестирование реализации разработанных алгоритмов.
+\end{enumerate}
+
+\newpage
+\begin{center}
+\begin{thebibliography}{}
+\addcontentsline{toc}{section}{Список используемых источников}
+\bibitem{book} Мудров В.И. Задача о коммивояжере (2-е издание). --- УРСС, 2013. --- 64 с.
+\end{thebibliography}
+\end{center}
+
+\end{document}
